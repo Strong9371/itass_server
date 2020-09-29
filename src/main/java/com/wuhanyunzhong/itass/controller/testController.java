@@ -19,6 +19,7 @@ import java.util.Map;
 public class testController {
 
     public static List<Map> allDepart = null;
+    public static String sessionId = "";
 
     @Autowired
     DggService dggService;
@@ -29,7 +30,6 @@ public class testController {
 
 
         System.out.println(formdata);
-        System.err.println("ksldksl");
         String filePath = "src/main/webapp/temporary/depart.xlsx";
         File file =  new File(filePath);
         System.err.println(file.length());

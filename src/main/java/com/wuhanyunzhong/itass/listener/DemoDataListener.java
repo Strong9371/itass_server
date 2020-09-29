@@ -26,15 +26,7 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
     String fd = "顶呱呱集团";
     int pid = 1 ;
     int id = 2 ;
-    /**
-     * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
-     */
 
-    /**
-     * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
-     *
-     * @param demoDAO
-     */
 
     /**
      * 这个每一条数据解析都会来调用

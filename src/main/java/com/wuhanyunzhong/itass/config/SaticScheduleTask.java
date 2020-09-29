@@ -16,8 +16,8 @@ public class SaticScheduleTask {
     //或直接指定时间间隔，例如：5秒
 //    @Scheduled(fixedRate=5000)
     private void configureTasks() {
-        //System.out.println("fileName---->"+filePath);
         String filePath = "src/main/webapp/temporary/";
+        System.out.println("fileName---->"+filePath);
         //创建不同的文件夹目录
         File file=new File(filePath);
         //判断文件夹是否存在
@@ -33,7 +33,7 @@ public class SaticScheduleTask {
         try
         {
             // 建立链接
-            URL httpUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=export&sessionID=65201&format=excel&extype=simple");
+            URL httpUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=export&sessionID=9311&format=excel&extype=simple");
             conn=(HttpURLConnection) httpUrl.openConnection();
             //以Post方式提交表单，默认get方式
 //            conn.setRequestMethod("post");
