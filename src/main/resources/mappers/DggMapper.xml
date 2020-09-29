@@ -5,9 +5,9 @@
 <!-- namespace：当前XML文件用于配置哪个接口中抽象方法对应的SQL语句 -->
 <mapper namespace="com.wuhanyunzhong.itass.mapper.DggMapper">
 	<!--	测试-->
-	<insert id="test" >
-		insert into department(pid)
-		values (6);
+	<insert id="addUser" parameterType="Map">
+		insert into user(uname,password)
+		values (#{uname},#{password});
 	</insert>
 
 	<!--	查询当前游戏-->
@@ -17,14 +17,27 @@
 		WHERE id=1
 	</select>
 
-	<!--	新增多个考勤点-->
-	<!--	Integer addLoc(JSONObject groObject);-->
+<!--增加事业部信息-->
 	<insert id="insertDepart" parameterType="java.util.List">
 		INSERT INTO department(pid ,pname)
 		VALUES
 		<foreach collection="list"
 				 item="item" separator=",">
 			(#{item.pid},#{item.name})
+		</foreach>
+	</insert>
+
+	<!--增加接通量信息-->
+	<insert id="insertJtl" parameterType="java.util.List">
+		INSERT INTO dianhualiang(fname,sname,phoneTime,phoneAmount,phoneDone,
+		amount30,amount60,time10,time11,time12,time15,time16,time17,time18,time20,
+		changeDate)
+		VALUES
+		<foreach collection="list"
+				 item="item" separator=",">
+			(#{item.fname},#{item.sname},#{item.phoneTime},#{item.phoneAmount},#{item.phoneDone},
+			#{item.amount30},#{item.amount60},#{item.time10},#{item.time11},#{item.time12},#{item.time15},#{item.time16},#{item.time17},
+			#{item.time18},#{item.time20},now())
 		</foreach>
 	</insert>
 

@@ -18,6 +18,12 @@ public class DggServiceImpl implements DggService {
 
 
     @Override
+    public Integer addUser(Map map) {
+        Integer integer = dggMapper.addUser(map);
+        return integer;
+    }
+
+    @Override
     public Integer test() {
         Integer test = dggMapper.test();
         return test;
@@ -32,6 +38,12 @@ public class DggServiceImpl implements DggService {
     @Override
     public Integer insertDepart(List partList) {
         Integer integer = dggMapper.insertDepart(partList);
+        return integer;
+    }
+
+    @Override
+    public Integer insertJtl(List partList) {
+        Integer integer = dggMapper.insertJtl(partList);
         return integer;
     }
 

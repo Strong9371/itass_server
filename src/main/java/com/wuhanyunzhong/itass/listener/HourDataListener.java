@@ -4,6 +4,7 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.wuhanyunzhong.itass.controller.testController;
 import com.wuhanyunzhong.itass.util.DepartDate;
+import com.wuhanyunzhong.itass.util.JtlDate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 
-public class HourDataListener extends AnalysisEventListener<DepartDate> {
+public class HourDataListener extends AnalysisEventListener<JtlDate> {
 
 
 
     private static final int BATCH_COUNT = 5;
-    List<Map> list = new ArrayList<Map>();
+    List<JtlDate> list = new ArrayList<JtlDate>();
 
 
     /**
@@ -27,8 +28,14 @@ public class HourDataListener extends AnalysisEventListener<DepartDate> {
      * @param context
      */
     @Override
-    public void invoke(DepartDate data, AnalysisContext context) {
-        System.err.println(data);
+    public void invoke(JtlDate data, AnalysisContext context) {
+        if(data.getFname().equals("合计")){
+            data.setFname("顶呱呱集团");
+        }else if(data.getFname().equals("顶呱呱集团")){
+            data.setFname(data.getSname());
+        }
+        list.add(data);
+
     }
     /**
      * 所有数据解析完成了 都会来调用
@@ -45,7 +52,7 @@ public class HourDataListener extends AnalysisEventListener<DepartDate> {
      * 加上存储数据库
      */
     private void saveData() {
-        testController.allDepart = list;
+        testController.jtlDates = list;
     }
 }
 

@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 
 @Configuration      //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling   // 2.开启定时任务
@@ -16,8 +17,28 @@ public class SaticScheduleTask {
     //或直接指定时间间隔，例如：5秒
 //    @Scheduled(fixedRate=5000)
     private void configureTasks() {
+
+        Calendar calendar = Calendar.getInstance();
+
+        //获取年
+        int year = calendar.get(Calendar.YEAR);
+        //获取月 月从0开始，0表示1月，1表示2月
+        int month = calendar.get(Calendar.MONTH)+1;
+        /*
+         * 获取日
+         * 与"天"相关的时间分量:
+         * DAY_OF_MONTH:月中的天
+         * DAY_OF_WEEK:周中的天
+         * DAY_OF_YEAR:年中的天
+         *
+         * DATE:月中的天。与DAY_OF_MONTH一致
+         */
+        int day = calendar.get(Calendar.DATE);
+
+        int h = calendar.get(Calendar.HOUR_OF_DAY);
+        String jtlTime = year +"-" + month+"-"+ day +":"+ h ;
+
         String filePath = "src/main/webapp/temporary/";
-        System.out.println("fileName---->"+filePath);
         //创建不同的文件夹目录
         File file=new File(filePath);
         //判断文件夹是否存在
@@ -53,7 +74,7 @@ public class SaticScheduleTask {
 
             }
             //写入到文件（注意文件保存路径的后面一定要加上文件的名称）
-            fileOut = new FileOutputStream(filePath+"jtl.xlsx");
+            fileOut = new FileOutputStream(filePath+ jtlTime +".xlsx");
             BufferedOutputStream bos = new BufferedOutputStream(fileOut);
 
             byte[] buf = new byte[4096];

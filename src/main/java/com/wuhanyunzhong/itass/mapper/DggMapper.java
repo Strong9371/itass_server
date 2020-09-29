@@ -8,10 +8,14 @@ import java.util.Map;
 
 @Mapper
 public interface DggMapper {
+
+    Integer addUser(Map map);
     Integer test();
 
     Map setest();
 
     //新增多个考勤点
     Integer insertDepart(@Param("list") List list);
+
+    Integer insertJtl(@Param("list") List list);
 }

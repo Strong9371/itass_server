@@ -56,6 +56,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.1.6.RELEASE</version>
+        </dependency>
+
         <!--        阿里巴巴操作json工具-->
         <dependency>
             <groupId>com.alibaba</groupId>
