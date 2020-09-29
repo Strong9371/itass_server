@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+	"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- namespace：当前XML文件用于配置哪个接口中抽象方法对应的SQL语句 -->
+<mapper namespace="com.wuhanyunzhong.itass.mapper.DggMapper">
+	<!--	测试-->
+	<insert id="test" >
+		insert into department(pid)
+		values (6);
+	</insert>
+
+	<!--	查询当前游戏-->
+	<select id="setest" resultType="Map">
+		SELECT id,pid
+		FROM department
+		WHERE id=1
+	</select>
+
+	<!--	新增多个考勤点-->
+	<!--	Integer addLoc(JSONObject groObject);-->
+	<insert id="insertDepart" parameterType="java.util.List">
+		INSERT INTO department(pid ,pname)
+		VALUES
+		<foreach collection="list"
+				 item="item" separator=",">
+			(#{item.pid},#{item.name})
+		</foreach>
+	</insert>
+
+</mapper>
+
+
+
+
+
+
