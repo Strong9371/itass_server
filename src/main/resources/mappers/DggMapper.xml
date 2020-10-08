@@ -41,6 +41,260 @@
 		</foreach>
 	</insert>
 
+	<!--增加接通量信息-->
+	<insert id="addFirst" parameterType="java.util.List">
+		INSERT INTO dianhualiang(fname,sname,changeDate)
+		VALUES
+		<foreach collection="list"
+				 item="item" separator=",">
+			(#{item.fname},#{item.sname},now())
+		</foreach>
+	</insert>
+
+<!--	更新数据-->
+	<update id="upData" parameterType="java.util.List">
+		update dianhualiang
+		SET phoneTime =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case" close="end">
+			when fname = #{item.fname} and sname = #{item.sname} then #{item.phoneTime}
+		</foreach>
+		,phoneAmount =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} then #{item.phoneAmount}
+		</foreach>
+		,phoneDone =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} then #{item.phoneDone}
+		</foreach>
+		,amount30 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} then #{item.amount30}
+		</foreach>
+		,amount60 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} then #{item.amount60}
+		</foreach>
+		,isFlag =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} then 1
+		</foreach>
+
+		,time10 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 10 then #{item.time10}
+			when #{item.upType} != 10 then time10
+		</foreach>
+
+		,time11 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 11 then #{item.time11}
+			when #{item.upType} != 11 then time11
+		</foreach>
+
+		,time12 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 12 then #{item.time12}
+			when #{item.upType} != 12 then time12
+		</foreach>
+
+		,time15 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 15 then #{item.time15}
+			when #{item.upType} != 15 then time15
+		</foreach>
+
+		,time16 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 16 then #{item.time16}
+			when #{item.upType} != 16 then time16
+		</foreach>
+
+		,time17 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 17 then #{item.time17}
+			when #{item.upType} != 17 then time17
+		</foreach>
+
+		,time18 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 18 then #{item.time18}
+			when #{item.upType} != 18 then time18
+		</foreach>
+
+		,time20 =
+		<foreach collection="list" item="item" index="index"
+				 separator=" " open="case"  close="end">
+			when fname = #{item.fname} and sname = #{item.sname} and  #{item.upType} = 20 then #{item.time20}
+			when #{item.upType} != 20 then time20
+		</foreach>
+		where date(changeDate) = date(now()) ;
+
+	</update>
+
+<!--	通过用户名查询登录信息-->
+	<select id="findByname" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select uname as name ,password,avatar ,pid,pname,roles
+		from user
+		where uname = #{name}
+	</select>
+
+<!--	添加token-->
+	<update id="upToken" parameterType="java.util.HashMap">
+		update user
+		set token = #{token}
+		where uname = #{name}
+	</update>
+
+<!--	查询一级部门信息-->
+	<select id="findAllde" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT id,pid,pname
+		FROM department
+	</select>
+
+<!--	通过一级部门查询所有数据-->
+	<select id="findData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT dhl.fname,dhl.sname,dhl.phoneTime,dhl.phoneAmount,dhl.phoneDone,dhl.amount30,dhl.amount60,dm.costFix
+		<if test="h &gt; 9">
+			, dhl.time10  as time10
+		</if>
+		<if test="h &gt; 10">
+			, (dhl.time11 - dhl.time10 ) as time11
+		</if>
+		<if test="h &gt; 11">
+			, (dhl.time12 -dhl.time11 ) as time12
+		</if>
+		<if test="h &gt; 12">
+			, (dhl.time15 - dhl.time12 ) as time15
+		</if>
+		<if test="h &gt; 15">
+			, (dhl.time16 - dhl.time15 ) as time16
+		</if>
+		<if test="h &gt; 16">
+			, (dhl.time17 - dhl.time16 ) as time17
+		</if>
+		<if test="h &gt; 17">
+			, (dhl.time18 - dhl.time17 ) as time18
+		</if>
+		<if test="h &gt; 19">
+			, (dhl.time20 - dhl.time18 ) as time20
+		</if>
+
+		FROM dianhualiang as dhl
+		left join department as dm on dhl.sname = dm.pname
+		WHERE date(dhl.changeDate) = #{viewDate} AND dhl.isFlag = 1 AND dhl.fname = #{pname}
+		order by dhl.sname
+	</select>
+
+
+<!--	查询费用月租-->
+	<select id="findCost" parameterType="Map" resultType="Map">
+		select costFix,isCost
+		from department
+		where id = #{pid}
+	</select>
+
+<!--	查询接通量-->
+	<select id="findPeakData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT fname, sum(phoneTime) as phoneTime,sum(phoneAmount) as totalJtl,sum(phoneDone) as jietongliang,
+				sum(amount30) as amount30, sum(amount60) as amount60
+		<if test="h &gt; 9">
+			, sum(time10) as "10:00"
+		</if>
+		<if test="h &gt; 10">
+			, (sum(time11)-sum(time10)) as "11:00"
+		</if>
+		<if test="h &gt; 11">
+			, (sum(time12)-sum(time11)) as "12:00"
+		</if>
+		<if test="h &gt; 12">
+			, (sum(time15)-sum(time12)) as "15:00"
+		</if>
+		<if test="h &gt; 15">
+			,(sum(time16)-sum(time15)) as "16:00"
+		</if>
+		<if test="h &gt; 16">
+			, (sum(time17)-sum(time16)) as "17:00"
+		</if>
+		<if test="h &gt; 17">
+			, (sum(time18)-sum(time17)) as "18:00"
+		</if>
+		<if test="h &gt; 19">
+			, (sum(time20)-sum(time18)) as "20:00"
+		</if>
+
+		FROM dianhualiang
+		WHERE date(changeDate) = #{viewDate} AND isFlag = 1 AND fname = #{pname};
+	</select>
+
+
+<!--	查询日均数据-->
+	<select id="findAvg" resultType="Map" parameterType="Map">
+		SELECT AVG(phoneTime) AS ptavg,
+		AVG(pdavg) AS pdavg,
+		AVG(paavg) AS paavg,
+		AVG(jtl) AS jtl,
+		AVG(amount30) AS amount30,
+		AVG(amount60) AS amount60,
+		AVG(costAmount) AS costAvg
+		FROM (
+			SELECT SUM(dhl.phoneTime) AS phoneTime,
+				SUM(dhl.phoneDone) AS pdavg,
+				SUM(dhl.phoneAmount) AS paavg,
+				SUM(dhl.phoneDone)/SUM(phoneAmount) AS jtl,
+				SUM(dhl.amount30) AS amount30,
+				SUM(dhl.amount60) AS amount60,
+				SUM(dm.costFix*((dhl.phoneDone-dhl.amount60) + dhl.amount60*4) ) AS costAmount
+		FROM dianhualiang as dhl
+		left join department as dm on dhl.sname=dm.pname
+		WHERE DATE_FORMAT( dhl.changeDate , '%Y%m' ) = DATE_FORMAT( CURDATE() , '%Y%m' )
+		AND fname = #{pname}
+		GROUP BY DATE(dhl.changeDate)
+		) t
+	</select>
+
+<!--	查询环比接通率数据-->
+	<select id="findDayCompareJtlv" resultType="Map" parameterType="Map">
+		SELECT 	dhl.fname,
+				SUM(dhl.phoneDone)/SUM(phoneAmount) AS jtl,
+				DATE(dhl.changeDate) as changeDate
+		FROM dianhualiang as dhl
+		left join department as dm on dhl.sname=dm.pname
+		WHERE fname = #{pname}
+		GROUP BY DATE(dhl.changeDate)
+		LIMIT 0, #{limit}
+	</select>
+
+<!--	查询环比详情数据-->
+	<select id="findDayCompareInfo" resultType="Map" parameterType="Map">
+		SELECT dhl.fname as fname,
+				dhl.phoneTime AS phoneTime,
+				dhl.phoneDone AS pdavg,
+				dhl.phoneAmount AS paavg,
+				(dhl.phoneDone)/(phoneAmount) AS jtl,
+				dhl.amount30 AS amount30,
+				dhl.amount60 AS amount60,
+				dm.costFix*((dhl.phoneDone-dhl.amount60) + dhl.amount60*4)  AS costAmount
+				,DATE(dhl.changeDate)
+		FROM dianhualiang as dhl
+		left join department as dm on dhl.sname=dm.pname
+		WHERE fname = "武汉分公司"
+		order BY dhl.changeDate
+
+	</select>
+
 </mapper>
 
 

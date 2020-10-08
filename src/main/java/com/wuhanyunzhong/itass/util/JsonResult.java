@@ -5,6 +5,9 @@ public class JsonResult<T> {
     private String message;
     private T data;
 
+    public JsonResult() {
+    }
+
     public JsonResult(Integer state, String message, T data) {
         this.state = state;
         this.message = message;
