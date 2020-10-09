@@ -2,6 +2,7 @@ package com.wuhanyunzhong.itass.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.wuhanyunzhong.itass.config.SaticScheduleTask;
 import com.wuhanyunzhong.itass.controller.testController;
 import com.wuhanyunzhong.itass.util.DepartDate;
 import com.wuhanyunzhong.itass.util.JtlDate;
@@ -31,6 +32,7 @@ public class HourDataListener extends AnalysisEventListener<JtlDate> {
     public void invoke(JtlDate data, AnalysisContext context) {
         if(data.getFname().equals("合计")){
             data.setFname("顶呱呱集团");
+            data.setSname("合计");
         }else if(data.getFname().equals("顶呱呱集团")){
             data.setFname(data.getSname());
         }
@@ -52,7 +54,7 @@ public class HourDataListener extends AnalysisEventListener<JtlDate> {
      * 加上存储数据库
      */
     private void saveData() {
-        testController.jtlDates = list;
+        SaticScheduleTask.jtlDates = list;
     }
 }
 

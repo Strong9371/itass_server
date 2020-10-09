@@ -27,6 +27,16 @@
 		</foreach>
 	</insert>
 
+	<!--	添加每日第一次完整的信息-->
+	<insert id="addFirst" parameterType="Map">
+		insert into dianhualiang(fname,sname)
+		VALUES
+		<foreach collection="list"
+				 item="item" separator=",">
+			(#{item.fname},#{item.sname})
+		</foreach>
+	</insert>
+
 	<!--增加接通量信息-->
 	<insert id="insertJtl" parameterType="java.util.List">
 		INSERT INTO dianhualiang(fname,sname,phoneTime,phoneAmount,phoneDone,
@@ -40,6 +50,21 @@
 			#{item.time18},#{item.time20},now())
 		</foreach>
 	</insert>
+
+<!--	<insert id="insertJtl" parameterType="java.util.List">-->
+<!--		INSERT INTO dianhualiang(fname,sname,phoneTime,phoneAmount,phoneDone,-->
+<!--		amount30,amount60,time10,time11,time12,time15,time16,time17,time18,time20,-->
+<!--		changeDate)-->
+<!--		VALUES-->
+<!--		<foreach collection="list"-->
+<!--				 item="item" separator=",">-->
+<!--			(#{item.fname},#{item.sname},#{item.phoneTime},#{item.phoneAmount},#{item.phoneDone},-->
+<!--			#{item.amount30},#{item.amount60},#{item.time10},#{item.time11},#{item.time12},#{item.time15},#{item.time16},#{item.time17},-->
+<!--			#{item.time18},#{item.time20},now())-->
+<!--		</foreach>-->
+<!--	</insert>-->
+
+
 
 </mapper>
 

@@ -10,12 +10,16 @@ import java.util.Map;
 public interface DggMapper {
 
     Integer addUser(Map map);
+
     Integer test();
 
     Map setest();
 
     //新增多个考勤点
     Integer insertDepart(@Param("list") List list);
+
+//    添加每日第一个完整的信息
+    Integer addFirst(@Param("list") List list);
 
     Integer insertJtl(@Param("list") List list);
 }

@@ -1,5 +1,11 @@
 package com.wuhanyunzhong.itass.config;
 
+import com.alibaba.excel.EasyExcel;
+import com.wuhanyunzhong.itass.listener.HourDataListener;
+import com.wuhanyunzhong.itass.service.DggService;
+import com.wuhanyunzhong.itass.util.DepartDate;
+import com.wuhanyunzhong.itass.util.JtlDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -8,11 +14,18 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.List;
 
 @Configuration      //1.主要用于标记配置类，兼备Component的效果。
 @EnableScheduling   // 2.开启定时任务
 public class SaticScheduleTask {
-    //3.添加定时任务
+
+    public static List<DepartDate> firstDates = null;
+    public static List<JtlDate> jtlDates = null;
+
+    @Autowired
+    DggService dggService;
+
     @Scheduled(cron = "0 0 9,10,11,12,15,16,17,18,20 ? * MON-FRI")
     //或直接指定时间间隔，例如：5秒
 //    @Scheduled(fixedRate=5000)
@@ -36,8 +49,15 @@ public class SaticScheduleTask {
         int day = calendar.get(Calendar.DATE);
 
         int h = calendar.get(Calendar.HOUR_OF_DAY);
-        String jtlTime = year +"-" + month+"-"+ day +":"+ h ;
+        if(h < 10){
+            String filePath = "src/main/webapp/temporary/depart.xlsx";
+            File file =  new File(filePath);
+            EasyExcel.read(filePath, JtlDate.class, new HourDataListener()).sheet().headRowNumber(0).doRead();
+            dggService.addFirst(firstDates);
+            return;
+        }
 
+        String jtlTime = year +"-" + month+"-"+ day + "-" + h ;
         String filePath = "src/main/webapp/temporary/";
         //创建不同的文件夹目录
         File file=new File(filePath);
@@ -54,7 +74,7 @@ public class SaticScheduleTask {
         try
         {
             // 建立链接
-            URL httpUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=export&sessionID=9311&format=excel&extype=simple");
+            URL httpUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=export&sessionID=53809&format=excel&extype=simple");
             conn=(HttpURLConnection) httpUrl.openConnection();
             //以Post方式提交表单，默认get方式
 //            conn.setRequestMethod("post");
@@ -91,8 +111,12 @@ public class SaticScheduleTask {
         } catch (Exception e)
         {
             e.printStackTrace();
-            System.out.println("抛出异常！！");
         }
+
+//       文件下载完毕之后的操作
+
+        EasyExcel.read(filePath+ jtlTime +".xlsx", JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
+        Integer integer = dggService.upJtl(jtlDates);
 
     }
 }

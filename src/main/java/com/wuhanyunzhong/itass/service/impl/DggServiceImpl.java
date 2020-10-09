@@ -36,6 +36,12 @@ public class DggServiceImpl implements DggService {
     }
 
     @Override
+    public Integer addFirst(List partList) {
+        Integer integer = dggMapper.addFirst(partList);
+        return integer;
+    }
+
+    @Override
     public Integer insertDepart(List partList) {
         Integer integer = dggMapper.insertDepart(partList);
         return integer;
@@ -45,6 +51,11 @@ public class DggServiceImpl implements DggService {
     public Integer insertJtl(List partList) {
         Integer integer = dggMapper.insertJtl(partList);
         return integer;
+    }
+
+    @Override
+    public Integer upJtl(List partList) {
+        return null;
     }
 
 

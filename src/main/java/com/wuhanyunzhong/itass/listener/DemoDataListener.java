@@ -2,6 +2,7 @@ package com.wuhanyunzhong.itass.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.wuhanyunzhong.itass.config.SaticScheduleTask;
 import com.wuhanyunzhong.itass.controller.testController;
 import com.wuhanyunzhong.itass.service.DggService;
 import com.wuhanyunzhong.itass.service.impl.DggServiceImpl;
@@ -21,7 +22,7 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
 //    DggService dggService;
 
     private static final int BATCH_COUNT = 5;
-    List<Map> list = new ArrayList<Map>();
+    List<DepartDate> list = new ArrayList<DepartDate>();
 
     String fd = "顶呱呱集团";
     int pid = 1 ;
@@ -39,35 +40,40 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
     public void invoke(DepartDate data, AnalysisContext context) {
         System.err.println(data);
 
-        Map mapTemp = new HashMap();
-
-        if(! data.getFirstDepart().equals(fd)){
-            fd = data.getFirstDepart();
-            mapTemp.put("pid",1);
-            mapTemp.put("name",data.getFirstDepart());
-            pid = id;
-
-
-            list.add(mapTemp);
-            id ++ ;
-
-
-            Map seMap = new HashMap();
-            seMap.put("pid",pid);
-            seMap.put("name",data.getSecond());
-            list.add(seMap);
-            id ++ ;
-
-//
-        }else{
-            mapTemp.put("pid",pid);
-            mapTemp.put("name",data.getSecond());
-            list.add(mapTemp);
-            id ++ ;
-
-        }
-        // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
+//       test01(data);
+        list.add(data);
     }
+
+//    void test01(DepartDate data){
+//        Map mapTemp = new HashMap();
+//
+//        if(! data.getFirstDepart().equals(fd)){
+//            fd = data.getFirstDepart();
+//            mapTemp.put("pid",1);
+//            mapTemp.put("name",data.getFirstDepart());
+//            pid = id;
+//
+//
+//            list.add(mapTemp);
+//            id ++ ;
+//
+//
+//            Map seMap = new HashMap();
+//            seMap.put("pid",pid);
+//            seMap.put("name",data.getSecond());
+//            list.add(seMap);
+//            id ++ ;
+//
+//        }else{
+//            mapTemp.put("pid",pid);
+//            mapTemp.put("name",data.getSecond());
+//            list.add(mapTemp);
+//            id ++ ;
+//
+//        }
+//    }
+
+
     /**
      * 所有数据解析完成了 都会来调用
      *
@@ -83,11 +89,7 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
      * 加上存储数据库
      */
     private void saveData() {
-        testController.allDepart = list;
-//        System.err.println(list);
-//        DggService dgs = new DggServiceImpl();
-//        Integer integer = dgs.insertDepart(list);
-//        System.err.println(integer);
+        SaticScheduleTask.firstDates = list;
     }
 }
 

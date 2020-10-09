@@ -38,16 +38,16 @@ public class testController {
     @ResponseBody
     public JsonResult test01(@RequestParam("formdata") String formdata){
         System.out.println(formdata);
-        test02();
+        addData01();
         return null;
     }
 
-    void test01(){
+    void addData01(){
         String filePath = "src/main/webapp/temporary/jtl01.xlsx";
         File file =  new File(filePath);
         EasyExcel.read(filePath, JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
-        Integer integer = dggService.insertJtl(jtlDates);
-
+//        Integer integer = dggService.insertJtl(jtlDates);
+        System.err.println(jtlDates);
 
 //     添加事业部信息
         // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭

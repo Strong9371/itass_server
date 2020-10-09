@@ -14,7 +14,11 @@ public interface DggService {
 
     public Map setest();
 
+    public Integer addFirst(List partList);
+
     public Integer insertDepart(List partList);
 
     public Integer insertJtl(List partList);
+
+    public Integer upJtl(List partList);
 }
