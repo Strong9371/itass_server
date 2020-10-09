@@ -1,12 +1,14 @@
 package com.wuhanyunzhong.itass.config;
 
 import com.alibaba.excel.EasyExcel;
+import com.wuhanyunzhong.itass.listener.DemoDataListener;
 import com.wuhanyunzhong.itass.listener.HourDataListener;
 import com.wuhanyunzhong.itass.service.DggService;
 import com.wuhanyunzhong.itass.util.DepartDate;
 import com.wuhanyunzhong.itass.util.JtlDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -20,17 +22,22 @@ import java.util.List;
 @EnableScheduling   // 2.开启定时任务
 public class SaticScheduleTask {
 
-    public static List<DepartDate> firstDates = null;
-    public static List<JtlDate> jtlDates = null;
-
     @Autowired
     DggService dggService;
 
-    @Scheduled(cron = "0 0 9,10,11,12,15,16,17,18,20 ? * MON-FRI")
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
+
+    public static String downLordUrl = "https://biapi.dgg188.cn/ReportServer?op=export&sessionID=6693&format=excel&extype=simple";
+    public static List<DepartDate> firstData;
+    public static List<JtlDate> jtlDates;
+    public String isAddFirst = "";
+
+    //3.添加定时任务
+    @Scheduled(cron = "0 0 9,10,11,12,15,16,17,18,20 * * ?")
     //或直接指定时间间隔，例如：5秒
 //    @Scheduled(fixedRate=5000)
     private void configureTasks() {
-
         Calendar calendar = Calendar.getInstance();
 
         //获取年
@@ -49,15 +56,28 @@ public class SaticScheduleTask {
         int day = calendar.get(Calendar.DATE);
 
         int h = calendar.get(Calendar.HOUR_OF_DAY);
-        if(h < 10){
+
+        if(null == firstData){
+            System.err.println("分析部门信息");
             String filePath = "src/main/webapp/temporary/depart.xlsx";
-            File file =  new File(filePath);
-            EasyExcel.read(filePath, JtlDate.class, new HourDataListener()).sheet().headRowNumber(0).doRead();
-            dggService.addFirst(firstDates);
-            return;
+            EasyExcel.read(filePath, DepartDate.class, new DemoDataListener()).sheet().headRowNumber(0).doRead();
         }
 
-        String jtlTime = year +"-" + month+"-"+ day + "-" + h ;
+        String daySt =year+"-"+month+"-"+day;
+
+        if( ! daySt.equals(stringRedisTemplate.opsForValue().get("isaddFirst"))){
+
+            Integer integer = dggService.addFirst(firstData);
+            stringRedisTemplate.opsForValue().set("isaddFirst",daySt);
+            if(h == 9){
+                return;
+
+            }
+        }
+
+
+        String jtlTime = year +"-" + month+"-"+ day +"-"+ h ;
+
         String filePath = "src/main/webapp/temporary/";
         //创建不同的文件夹目录
         File file=new File(filePath);
@@ -74,7 +94,7 @@ public class SaticScheduleTask {
         try
         {
             // 建立链接
-            URL httpUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=export&sessionID=53809&format=excel&extype=simple");
+            URL httpUrl=new URL(downLordUrl);
             conn=(HttpURLConnection) httpUrl.openConnection();
             //以Post方式提交表单，默认get方式
 //            conn.setRequestMethod("post");
@@ -112,11 +132,14 @@ public class SaticScheduleTask {
         {
             e.printStackTrace();
         }
+//        addjtl(filePath+ jtlTime +".xlsx");
+        addjtl(filePath+ "jtl01.xlsx");
+    }
 
-//       文件下载完毕之后的操作
-
-        EasyExcel.read(filePath+ jtlTime +".xlsx", JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
-        Integer integer = dggService.upJtl(jtlDates);
-
+    void addjtl(String fileName){
+        File file =  new File(fileName);
+        EasyExcel.read(fileName, JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
+        System.err.println(jtlDates);
+        Integer integer = dggService.upData(jtlDates);
     }
 }

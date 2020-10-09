@@ -1,5 +1,6 @@
 package com.wuhanyunzhong.itass.mapper;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +11,6 @@ import java.util.Map;
 public interface DggMapper {
 
     Integer addUser(Map map);
-
     Integer test();
 
     Map setest();
@@ -18,8 +18,27 @@ public interface DggMapper {
     //新增多个考勤点
     Integer insertDepart(@Param("list") List list);
 
-//    添加每日第一个完整的信息
     Integer addFirst(@Param("list") List list);
 
     Integer insertJtl(@Param("list") List list);
+
+    Integer upData(@Param("list") List list);
+
+
+    Map findByname(JSONObject regObject);
+
+    Integer upToken(JSONObject regObject);
+
+    List findAllde(JSONObject regObject);
+    List findData(JSONObject regObject);
+    Map findPeakData(JSONObject regObject);
+    Map findAvg(JSONObject regObject);
+    Map findCost(JSONObject regObject);
+
+//    日环比数据
+    List findDayCompareJtlv(JSONObject regObject);
+    List findDayCompareInfo(JSONObject regObject);
+
+
+
 }

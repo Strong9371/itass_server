@@ -7,10 +7,7 @@ import com.wuhanyunzhong.itass.controller.testController;
 import com.wuhanyunzhong.itass.util.DepartDate;
 import com.wuhanyunzhong.itass.util.JtlDate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class HourDataListener extends AnalysisEventListener<JtlDate> {
@@ -30,14 +27,44 @@ public class HourDataListener extends AnalysisEventListener<JtlDate> {
      */
     @Override
     public void invoke(JtlDate data, AnalysisContext context) {
-        if(data.getFname().equals("合计")){
-            data.setFname("顶呱呱集团");
-            data.setSname("合计");
-        }else if(data.getFname().equals("顶呱呱集团")){
-            data.setFname(data.getSname());
-        }
-        list.add(data);
+        Calendar calendar = Calendar.getInstance();
+        int h = calendar.get(Calendar.HOUR_OF_DAY);
 
+        if(data.getFname().equals("合计")){
+            data.setSname("合计");
+        }
+
+        switch(h) {
+            case 10:
+                data.setTime10((int)data.getPhoneDone());
+
+                break;
+            case 11:
+                data.setTime11((int)data.getPhoneDone());
+                break;
+            case 12:
+                data.setTime12((int)data.getPhoneDone());
+                break;
+            case 15:
+                data.setTime15((int)data.getPhoneDone());
+                break;
+            case 16:
+                data.setTime16((int)data.getPhoneDone());
+                break;
+            case 17:
+                data.setTime17((int)data.getPhoneDone());
+                break;
+            case 18:
+                data.setTime18((int)data.getPhoneDone());
+                break;
+            case 20:
+                data.setTime20((int)data.getPhoneDone());
+                break;
+            default:
+                break;
+        }
+        data.setUpType(h);
+        list.add(data);
     }
     /**
      * 所有数据解析完成了 都会来调用
@@ -55,6 +82,7 @@ public class HourDataListener extends AnalysisEventListener<JtlDate> {
      */
     private void saveData() {
         SaticScheduleTask.jtlDates = list;
+        testController.jtlDates = list;
     }
 }
 

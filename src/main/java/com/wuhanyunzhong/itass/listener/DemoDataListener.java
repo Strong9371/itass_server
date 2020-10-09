@@ -39,12 +39,8 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
     @Override
     public void invoke(DepartDate data, AnalysisContext context) {
         System.err.println(data);
-
-//       test01(data);
         list.add(data);
-    }
 
-//    void test01(DepartDate data){
 //        Map mapTemp = new HashMap();
 //
 //        if(! data.getFirstDepart().equals(fd)){
@@ -71,9 +67,7 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
 //            id ++ ;
 //
 //        }
-//    }
-
-
+    }
     /**
      * 所有数据解析完成了 都会来调用
      *
@@ -89,7 +83,9 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
      * 加上存储数据库
      */
     private void saveData() {
-        SaticScheduleTask.firstDates = list;
+        SaticScheduleTask.firstData = list;
+        testController.firstData = list;
+
     }
 }
 

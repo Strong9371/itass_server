@@ -25,6 +25,7 @@ public class testController {
 
     public static List<Map> allDepart = null;
     public static List<JtlDate> jtlDates = null;
+    public static List<DepartDate> firstData = null;
 
     public static String sessionId = "";
 
@@ -35,19 +36,22 @@ public class testController {
 
 
     @GetMapping("tdata")
-    @ResponseBody
     public JsonResult test01(@RequestParam("formdata") String formdata){
-        System.out.println(formdata);
-        addData01();
+        test01();
+//        String filePath = "src/main/webapp/temporary/depart.xlsx";
+//        EasyExcel.read(filePath, DepartDate.class, new DemoDataListener()).sheet().headRowNumber(0).doRead();
+//        Integer integer = dggService.addFirst(firstData);
         return null;
     }
 
-    void addData01(){
+    void test01(){
         String filePath = "src/main/webapp/temporary/jtl01.xlsx";
         File file =  new File(filePath);
         EasyExcel.read(filePath, JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
-//        Integer integer = dggService.insertJtl(jtlDates);
-        System.err.println(jtlDates);
+        System.err.println(jtlDates.size());
+        Integer integer = dggService.upData(jtlDates);
+        System.err.println(integer);
+
 
 //     添加事业部信息
         // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭
