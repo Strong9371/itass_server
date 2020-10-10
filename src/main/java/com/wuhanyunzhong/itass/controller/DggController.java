@@ -45,6 +45,7 @@ public class DggController extends BaseController{
             dggObject.put("token",token);
             dggService.upToken(dggObject);
 
+            System.err.println(byname);
             jr.setState(SUCCESS);
             jr.setMessage("登录成功");
             jr.setData(result);

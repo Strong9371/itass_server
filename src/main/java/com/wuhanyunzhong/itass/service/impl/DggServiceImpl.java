@@ -507,7 +507,7 @@ public class DggServiceImpl implements DggService {
             otherDate.put("v5_2",v5_2);
             Double v5_3 = Double.parseDouble(avgData.get("costAvg").toString());
             otherDate.put("v5_3",v5_3);
-            Double v5_4 = v5_1 / v5_3;
+            Double v5_4 = v5_3 == 0 ? 0 : v5_1 / v5_3 ;
             otherDate.put("v5_4",v5_4*100);
             int v5_5 = (int)costData.get("isCost");
             otherDate.put("v5_5",v5_5);

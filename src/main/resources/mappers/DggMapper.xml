@@ -146,7 +146,7 @@
 
 <!--	通过用户名查询登录信息-->
 	<select id="findByname" resultType="java.util.HashMap" parameterType="java.util.HashMap">
-		select uname as name ,password,avatar ,pid,pname,roles
+		select uname as name ,isAd,password,avatar ,pid,pname,roles
 		from user
 		where uname = #{name}
 	</select>
@@ -176,7 +176,7 @@
 		<if test="h &gt; 11">
 			, (dhl.time12 -dhl.time11 ) as time12
 		</if>
-		<if test="h &gt; 12">
+		<if test="h &gt; 14">
 			, (dhl.time15 - dhl.time12 ) as time15
 		</if>
 		<if test="h &gt; 15">
@@ -219,7 +219,7 @@
 		<if test="h &gt; 11">
 			, (sum(time12)-sum(time11)) as "12:00"
 		</if>
-		<if test="h &gt; 12">
+		<if test="h &gt; 14">
 			, (sum(time15)-sum(time12)) as "15:00"
 		</if>
 		<if test="h &gt; 15">
