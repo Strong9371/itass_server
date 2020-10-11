@@ -38,7 +38,6 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
      */
     @Override
     public void invoke(DepartDate data, AnalysisContext context) {
-        System.err.println(data);
         list.add(data);
 
 //        Map mapTemp = new HashMap();

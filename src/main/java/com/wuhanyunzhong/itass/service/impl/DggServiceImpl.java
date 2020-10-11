@@ -305,7 +305,6 @@ public class DggServiceImpl implements DggService {
      */
     @Override
     public Map getBig(JSONObject dggObject) {
-
         Map peakAndAmountData = dggMapper.findPeakData(dggObject) ;
         List<Map> viewData = dggMapper.findData(dggObject);
         Map costData = dggMapper.findCost(dggObject);
@@ -326,16 +325,91 @@ public class DggServiceImpl implements DggService {
         Map dayCompareData = new HashMap();
 
         List huanbiV1Data = new LinkedList();
+        List huanbiV2Data = new LinkedList();
+        List huanbiV3Data = new LinkedList();
+        List huanbiV4Data = new LinkedList();
 
         List<Map> dayCompareJtlv = dggMapper.findDayCompareJtlv(dggObject);
+        List<Map> dayCompareInfo = dggMapper.findDayCompareInfo(dggObject);
+
+        System.err.println(dayCompareJtlv);
+        System.err.println(dayCompareInfo);
+
+//        合计信息
         for(Map map : dayCompareJtlv){
+//            分析第一个图的合计信息
             Map temp = new HashMap();
-            temp.put("x",map.get("changeDate").toString().replaceFirst("-",""));
-            temp.put("y",Double.parseDouble(map.get("jtl").toString()));
+            temp.put("month",map.get("changeDate").toString().replaceFirst("-",""));
+            temp.put("city","分公司合计");
+            BigDecimal jtl = new BigDecimal(Double.parseDouble(map.get("jtl").toString()));
+            double temperature = jtl.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp.put("temperature",temperature);
+
             huanbiV1Data.add(temp);
+
+//            分析第三个图的信息
+            Map temp01 = new HashMap();
+            temp01.put("label",map.get("changeDate").toString().replaceFirst("-",""));
+            temp01.put("type","总接通");
+            BigDecimal phoneDone = new BigDecimal(Double.parseDouble(map.get("phoneDone") != null ? map.get("phoneDone").toString() : "0" ));
+//            double amount30 = s30.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp01.put("value",phoneDone);
+            huanbiV3Data.add(temp01);
+
+
+            Map temp02 = new HashMap();
+            temp02.put("label",map.get("changeDate").toString().replaceFirst("-",""));
+            temp02.put("type","30s");
+            BigDecimal s30 = new BigDecimal(Double.parseDouble(map.get("amount30") != null ? map.get("amount30").toString() : "0" ));
+//            double amount30 = s30.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp02.put("value",s30);
+            huanbiV3Data.add(temp02);
+
+            Map temp03 = new HashMap();
+            temp03.put("label",map.get("changeDate").toString().replaceFirst("-",""));
+            temp03.put("type","60s");
+            BigDecimal s60 = new BigDecimal(Double.parseDouble(map.get("amount60") != null ? map.get("amount60").toString() : "0" ));
+//            int amount60 = map.get("amount60") != null ?  (int)map.get("amount60") : 0;
+            temp03.put("value",s60);
+            huanbiV3Data.add(temp03);
+
+
         }
 
+        for(Map map : dayCompareInfo){
+//            分析第一个视图的部门数据
+            Map temp = new HashMap();
+            temp.put("month",map.get("changeDate").toString().replaceFirst("-",""));
+            temp.put("city",map.get("sname"));
+            BigDecimal jtl = new BigDecimal(Double.parseDouble(map.get("jtl")!= null ? map.get("jtl").toString() :  "0" ));
+            double temperature = jtl.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp.put("temperature",temperature);
+//            temp.put("city",Double.parseDouble(map.get("jtl").toString()));
+            huanbiV1Data.add(temp);
+
+
+//            分析第二个视图的数据
+            Map temp02 = new HashMap();
+            temp02.put("name",map.get("sname"));
+            int phoneAmount = map.get("pdavg") != null ?  (int)map.get("pdavg") : 0;
+            temp02.put("接通量",phoneAmount);
+            temp02.put("时间",map.get("changeDate").toString().replaceFirst("-",""));
+            huanbiV2Data.add(temp02);
+
+
+//            分析第四个图的数据
+            Map temp04 = new HashMap();
+            temp04.put("name",map.get("sname"));
+            int phoneTime = map.get("phoneTime") != null ?  (int)map.get("phoneTime") : 0;
+            temp04.put("接通量",phoneTime);
+            temp04.put("时间",map.get("changeDate").toString().replaceFirst("-",""));
+            huanbiV4Data.add(temp04);
+
+        }
         dayCompareData.put("huanbiV1Data",huanbiV1Data);
+        dayCompareData.put("huanbiV2Data",huanbiV2Data);
+        dayCompareData.put("huanbiV3Data",huanbiV3Data);
+        dayCompareData.put("huanbiV4Data",huanbiV4Data);
         return dayCompareData;
     }
 
@@ -349,7 +423,8 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","10:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("10:00"));
+                Double t10 = Double.parseDouble(peakAndAmountData.get("10:00").toString());
+                temp.put("nowjtl", t10 >=0 ? t10 : 0 );
                 v1.add(temp);
             }
 
@@ -357,7 +432,8 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","11:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("11:00"));
+                Double t11 = Double.parseDouble(peakAndAmountData.get("11:00").toString());
+                temp.put("nowjtl",t11 >=0 ? t11 : 0);
                 v1.add(temp);
             }
 
@@ -365,7 +441,8 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","12:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("12:00"));
+                Double t12 = Double.parseDouble(peakAndAmountData.get("12:00").toString());
+                temp.put("nowjtl",t12 >=0 ? t12 : 0);
                 v1.add(temp);
             }
 
@@ -373,7 +450,8 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","15:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("15:00"));
+                Double t15 = Double.parseDouble(peakAndAmountData.get("15:00").toString());
+                temp.put("nowjtl",t15 >=0 ? t15 : 0);
                 v1.add(temp);
             }
 
@@ -381,7 +459,8 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","16:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("16:00"));
+                Double t16 = Double.parseDouble(peakAndAmountData.get("16:00").toString());
+                temp.put("nowjtl",t16 >=0 ? t16 : 0);
                 v1.add(temp);
             }
 
@@ -389,7 +468,8 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","17:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("17:00"));
+                Double t17 = Double.parseDouble(peakAndAmountData.get("17:00").toString());
+                temp.put("nowjtl",t17 >=0 ? t17 : 0);
                 v1.add(temp);
             }
 
@@ -397,14 +477,16 @@ public class DggServiceImpl implements DggService {
                 Map temp = new HashMap();
                 temp.put("timeSt","18:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("18:00"));
+                Double t18 = Double.parseDouble(peakAndAmountData.get("18:00").toString());
+                temp.put("nowjtl",t18 >=0 ? t18 : 0);
                 v1.add(temp);
             }
             if(peakAndAmountData.containsKey("20:00")){
                 Map temp = new HashMap();
                 temp.put("timeSt","20:00");
                 temp.put("type","接通量");
-                temp.put("nowjtl",peakAndAmountData.get("20:00"));
+                Double t20 = Double.parseDouble(peakAndAmountData.get("20:00").toString());
+                temp.put("nowjtl",t20 >=0 ? t20 : 0);
                 v1.add(temp);
             }
         }
@@ -522,7 +604,6 @@ public class DggServiceImpl implements DggService {
         result.put("v4",v4);
         result.put("costData",costData);
         result.put("otherDate",otherDate);
-
         return result;
     }
 
@@ -551,7 +632,8 @@ public class DggServiceImpl implements DggService {
 //                第一个大图数据
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time10"));
+                Double t10 = Double.parseDouble(map.get("time10").toString());
+                temp.put("接通量",t10 >= 0 ? t10 : 0);
                 temp.put("时间","10:00");
                 leftViewData.add(temp);
 
@@ -559,49 +641,56 @@ public class DggServiceImpl implements DggService {
             if(map.containsKey("time11")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time11"));
+                Double t11 = Double.parseDouble(map.get("time11").toString());
+                temp.put("接通量",t11 >= 0 ? t11 : 0);
                 temp.put("时间","11:00");
                 leftViewData.add(temp);
             }
             if(map.containsKey("time12")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time12"));
+                Double t12 = Double.parseDouble(map.get("time12").toString());
+                temp.put("接通量",t12 >= 0 ? t12 : 0);
                 temp.put("时间","12:00");
                 leftViewData.add(temp);
             }
             if(map.containsKey("time15")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time15"));
+                Double t15 = Double.parseDouble(map.get("time15").toString());
+                temp.put("接通量",t15 >= 0 ? t15 : 0);
                 temp.put("时间","15:00");
                 leftViewData.add(temp);
             }
             if(map.containsKey("time16")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time16"));
+                Double t16 = Double.parseDouble(map.get("time16").toString());
+                temp.put("接通量",t16 >= 0 ? t16 : 0);
                 temp.put("时间","16:00");
                 leftViewData.add(temp);
             }
             if(map.containsKey("time17")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time17"));
+                Double t17 = Double.parseDouble(map.get("time17").toString());
+                temp.put("接通量",t17 >= 0 ? t17 : 0);
                 temp.put("时间","17:00");
                 leftViewData.add(temp);
             }
             if(map.containsKey("time18")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time18"));
+                Double t18 = Double.parseDouble(map.get("time18").toString());
+                temp.put("接通量",t18 >= 0 ? t18 : 0);
                 temp.put("时间","18:00");
                 leftViewData.add(temp);
             }
             if(map.containsKey("time20")){
                 Map temp = new HashMap();
                 temp.put("name",map.get("sname"));
-                temp.put("接通量",map.get("time20"));
+                Double t20 = Double.parseDouble(map.get("time20").toString());
+                temp.put("接通量",t20 >= 0 ? t20 : 0);
                 temp.put("时间","20:00");
                 leftViewData.add(temp);
             }
@@ -682,6 +771,7 @@ public class DggServiceImpl implements DggService {
 
         Map result = new HashMap();
         result.put("leftData",leftViewData);
+        System.err.println(leftViewData);
         result.put("rightData",rightViewData);
         result.put("leftdwData",leftdwViewData);
         result.put("timeViewData",timeViewData);

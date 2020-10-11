@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
@@ -30,14 +31,13 @@ public class SaticScheduleTask {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    public static String flushUrl = "https://biapi.dgg188.cn/ReportServer?op=fr_dialog&cmd=parameters_d&sessionID=44148";
-    public static String downLordUrl = "https://biapi.dgg188.cn/ReportServer?op=export&sessionID=44148&format=excel&extype=simple";
+    public static String downLordUrl = "54753";
     public static List<DepartDate> firstData;
     public static List<JtlDate> jtlDates;
     public String isAddFirst = "";
 
     //3.添加定时任务
-    @Scheduled(cron = "0 0 9,10,11,12,15,16,17,18,20 * * ?")
+    @Scheduled(cron = "0 0 9,10,11,12,15,16,17,18,19,20 * * ?")
     private void configureTasks() {
         Calendar calendar = Calendar.getInstance();
 
@@ -59,7 +59,6 @@ public class SaticScheduleTask {
         int h = calendar.get(Calendar.HOUR_OF_DAY);
 
         if(null == firstData){
-            System.err.println("分析部门信息");
             String filePath = "src/main/webapp/temporary/depart.xlsx";
             EasyExcel.read(filePath, DepartDate.class, new DemoDataListener()).sheet().headRowNumber(0).doRead();
         }
@@ -95,7 +94,7 @@ public class SaticScheduleTask {
         InputStream inputStream = null;
         try {
             // 建立链接
-            URL reflushUrl=new URL(flushUrl);
+            URL reflushUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=fr_dialog&cmd=parameters_d&sessionID="+ downLordUrl);
             conn=(HttpURLConnection) reflushUrl.openConnection();
             //以Post方式提交表单，默认get方式
 //            conn.setRequestMethod("POST");
@@ -110,15 +109,14 @@ public class SaticScheduleTask {
 
             byte[] buf = new byte[4096];
             int length = bis.read(buf);
+            System.err.println(length);
             //保存文件
             while(length != -1)
             {
                 length = bis.read(buf);
-                System.err.println(length);
             }
             bis.close();
-
-            sleep(10000);
+            inputStream.close();
             conn.disconnect();
 
 
@@ -126,12 +124,12 @@ public class SaticScheduleTask {
         {
             e.printStackTrace();
         }
+        sleep(5000);
 
-        sleep(2000);
         try
         {
             // 建立链接
-            URL httpUrl=new URL(downLordUrl);
+            URL httpUrl=new URL("https://biapi.dgg188.cn/ReportServer?op=export&sessionID="+downLordUrl+"&format=excel&extype=simple");
             conn01=(HttpURLConnection) httpUrl.openConnection();
             //以Post方式提交表单，默认get方式
 //            conn.setRequestMethod("post");
@@ -156,26 +154,35 @@ public class SaticScheduleTask {
 
             byte[] buf = new byte[4096];
             int length = bis.read(buf);
+            System.err.println(length);
             //保存文件
             while(length != -1)
             {
                 bos.write(buf, 0, length);
                 length = bis.read(buf);
             }
+            inputStream.close();
             bos.close();
             bis.close();
             conn01.disconnect();
+            Integer isAdd = 0;
+            do {
+                System.err.println(isAdd);
+                Integer addjtl = addjtl(filePath + jtlTime + ".xlsx");
+                isAdd = addjtl;
+            }while (isAdd < 1);
         } catch (Exception e)
         {
             e.printStackTrace();
         }
-        addjtl(filePath+ jtlTime +".xlsx");
+
 //        addjtl(filePath+ "jtl01.xlsx");
     }
 
-    void addjtl(String fileName){
+    Integer addjtl(String fileName){
         File file =  new File(fileName);
         EasyExcel.read(fileName, JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
         Integer integer = dggService.upData(jtlDates);
+        return integer;
     }
 }

@@ -168,28 +168,28 @@
 	<select id="findData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT dhl.fname,dhl.sname,dhl.phoneTime,dhl.phoneAmount,dhl.phoneDone,dhl.amount30,dhl.amount60,dm.costFix
 		<if test="h &gt; 9">
-			, dhl.time10  as time10
+			, IFNULL(dhl.time10,0)  as time10
 		</if>
 		<if test="h &gt; 10">
-			, (dhl.time11 - dhl.time10 ) as time11
+			, (dhl.time11 - IFNULL(dhl.time10 , 0)) as time11
 		</if>
 		<if test="h &gt; 11">
-			, (dhl.time12 -dhl.time11 ) as time12
+			, (dhl.time12 -IFNULL(dhl.time11,0) ) as time12
 		</if>
 		<if test="h &gt; 14">
-			, (dhl.time15 - dhl.time12 ) as time15
+			, (dhl.time15 - IFNULL(dhl.time12,0) ) as time15
 		</if>
 		<if test="h &gt; 15">
-			, (dhl.time16 - dhl.time15 ) as time16
+			, (dhl.time16 - IFNULL(dhl.time15,0) ) as time16
 		</if>
 		<if test="h &gt; 16">
-			, (dhl.time17 - dhl.time16 ) as time17
+			, (dhl.time17 - IFNULL(dhl.time16,0) ) as time17
 		</if>
 		<if test="h &gt; 17">
-			, (dhl.time18 - dhl.time17 ) as time18
+			, (dhl.time18 - IFNULL(dhl.time17,0) ) as time18
 		</if>
 		<if test="h &gt; 19">
-			, (dhl.time20 - dhl.time18 ) as time20
+			, (dhl.time20 - IFNULL(dhl.time18,0) ) as time20
 		</if>
 
 		FROM dianhualiang as dhl
@@ -211,28 +211,28 @@
 		SELECT fname, sum(phoneTime) as phoneTime,sum(phoneAmount) as totalJtl,sum(phoneDone) as jietongliang,
 				sum(amount30) as amount30, sum(amount60) as amount60
 		<if test="h &gt; 9">
-			, sum(time10) as "10:00"
+			, IFNULL(sum(time10),0) as "10:00"
 		</if>
 		<if test="h &gt; 10">
-			, (sum(time11)-sum(time10)) as "11:00"
+			, (sum(time11)-IFNULL(sum(time10),0)) as "11:00"
 		</if>
 		<if test="h &gt; 11">
-			, (sum(time12)-sum(time11)) as "12:00"
+			, (sum(time12)-IFNULL(sum(time11),0)) as "12:00"
 		</if>
 		<if test="h &gt; 14">
-			, (sum(time15)-sum(time12)) as "15:00"
+			, (sum(time15)-IFNULL(sum(time12),0)) as "15:00"
 		</if>
 		<if test="h &gt; 15">
-			,(sum(time16)-sum(time15)) as "16:00"
+			,(sum(time16)-IFNULL(sum(time15),0)) as "16:00"
 		</if>
 		<if test="h &gt; 16">
-			, (sum(time17)-sum(time16)) as "17:00"
+			, (sum(time17)-IFNULL(sum(time16),0)) as "17:00"
 		</if>
 		<if test="h &gt; 17">
-			, (sum(time18)-sum(time17)) as "18:00"
+			, (sum(time18)-IFNULL(sum(time17),0)) as "18:00"
 		</if>
 		<if test="h &gt; 19">
-			, (sum(time20)-sum(time18)) as "20:00"
+			, (sum(time20)-IFNULL(sum(time18),0)) as "20:00"
 		</if>
 
 		FROM dianhualiang
@@ -268,7 +268,10 @@
 <!--	查询环比接通率数据-->
 	<select id="findDayCompareJtlv" resultType="Map" parameterType="Map">
 		SELECT 	dhl.fname,
+				SUM(dhl.phoneDone) AS phoneDone,
 				SUM(dhl.phoneDone)/SUM(phoneAmount) AS jtl,
+				SUM(dhl.amount30) AS amount30,
+				SUM(dhl.amount60) AS amount60,
 				DATE(dhl.changeDate) as changeDate
 		FROM dianhualiang as dhl
 		left join department as dm on dhl.sname=dm.pname
@@ -280,6 +283,7 @@
 <!--	查询环比详情数据-->
 	<select id="findDayCompareInfo" resultType="Map" parameterType="Map">
 		SELECT dhl.fname as fname,
+				dhl.sname as sname,
 				dhl.phoneTime AS phoneTime,
 				dhl.phoneDone AS pdavg,
 				dhl.phoneAmount AS paavg,
@@ -287,10 +291,11 @@
 				dhl.amount30 AS amount30,
 				dhl.amount60 AS amount60,
 				dm.costFix*((dhl.phoneDone-dhl.amount60) + dhl.amount60*4)  AS costAmount
-				,DATE(dhl.changeDate)
+				,DATE(dhl.changeDate) as changeDate
 		FROM dianhualiang as dhl
 		left join department as dm on dhl.sname=dm.pname
-		WHERE fname = "武汉分公司"
+		WHERE fname = #{pname}
+		AND   DATE_SUB(CURDATE(), INTERVAL (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(dhl.changeDate)
 		order BY dhl.changeDate
 
 	</select>
