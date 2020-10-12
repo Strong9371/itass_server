@@ -139,6 +139,20 @@ public class DggController extends BaseController{
         return jr;
     }
 
+    @GetMapping("getWeekCompare")
+    @ResponseBody
+    public JsonResult getWeekCompare(@RequestParam String formdata){
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+
+        JsonResult jr = new JsonResult();
+
+        Map weekCompare = dggService.getWeekCompare(dggObject);
+        jr.setState(SUCCESS);
+        jr.setMessage("查询成功");
+        jr.setData(weekCompare);
+        return jr;
+    }
+
 
     /**
      * 递归处理   数据库树结构数据->树形json

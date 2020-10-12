@@ -37,6 +37,6 @@ public interface DggService {
     public Map getBig(JSONObject dggObject);
 
     public Map getDayCompare(JSONObject dggObject);
-
+    public Map getWeekCompare(JSONObject dggObject);
 
 }

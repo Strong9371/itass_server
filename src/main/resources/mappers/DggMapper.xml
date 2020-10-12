@@ -300,6 +300,44 @@
 
 	</select>
 
+
+	<select id="findWeekCompareJtlv" resultType="Map" parameterType="Map">
+		SELECT 	dhl.fname,
+				  SUM(dhl.phoneDone) AS phoneDone,
+				  SUM(dhl.phoneDone)/SUM(phoneAmount) AS jtl,
+				  SUM(dhl.amount30) AS amount30,
+				  SUM(dhl.amount60) AS amount60,
+				  DATE_FORMAT(dhl.changeDate,'%Y%u') AS  weeks
+		FROM dianhualiang as dhl
+				 left join department as dm on dhl.sname=dm.pname
+		WHERE fname = #{pname}
+		GROUP BY weeks
+		LIMIT 0, #{limit}
+	</select>
+
+
+	<!--	查询周环比详情数据-->
+	<select id="findWeekCompareInfo" resultType="Map" parameterType="Map">
+		SELECT dhl.fname as fname,
+		dhl.sname as sname,
+		SUM(dhl.phoneTime) AS phoneTime,
+		SUM(dhl.phoneDone) AS pdavg,
+		SUM(dhl.phoneAmount) AS paavg,
+		SUM(dhl.phoneDone) / SUM(phoneAmount) AS jtl,
+		SUM(dhl.amount30) AS amount30,
+		SUM(dhl.amount60) AS amount60,
+		dm.costFix*( SUM(dhl.phoneDone)+ 3 *  SUM(dhl.amount60) )  AS costAmount,
+		DATE_FORMAT(dhl.changeDate,'%Y%u') AS  weeks
+		FROM dianhualiang as dhl
+		left join department as dm on dhl.sname=dm.pname
+		WHERE fname = #{pname}
+		AND   DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(dhl.changeDate)
+		GROUP BY sname , weeks
+
+
+
+	</select>
+
 </mapper>
 
 

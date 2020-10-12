@@ -332,8 +332,6 @@ public class DggServiceImpl implements DggService {
         List<Map> dayCompareJtlv = dggMapper.findDayCompareJtlv(dggObject);
         List<Map> dayCompareInfo = dggMapper.findDayCompareInfo(dggObject);
 
-        System.err.println(dayCompareJtlv);
-        System.err.println(dayCompareInfo);
 
 //        合计信息
         for(Map map : dayCompareJtlv){
@@ -411,6 +409,102 @@ public class DggServiceImpl implements DggService {
         dayCompareData.put("huanbiV3Data",huanbiV3Data);
         dayCompareData.put("huanbiV4Data",huanbiV4Data);
         return dayCompareData;
+    }
+
+
+    @Override
+    public Map getWeekCompare(JSONObject dggObject) {
+        Map weekCompareData = new HashMap();
+
+        List zhuanbiV1Data = new LinkedList();
+        List zhuanbiV2Data = new LinkedList();
+        List zhuanbiV3Data = new LinkedList();
+        List zhuanbiV4Data = new LinkedList();
+        System.err.println(dggObject);
+        List<Map> dayCompareJtlv = dggMapper.findWeekCompareJtlv(dggObject);
+        List<Map> dayCompareInfo = dggMapper.findWeekCompareInfo(dggObject);
+
+        System.err.println(dayCompareJtlv);
+        System.err.println(dayCompareInfo);
+
+//        合计信息
+        for(Map map : dayCompareJtlv){
+//            分析第一个图的合计信息
+            Map temp = new HashMap();
+            temp.put("month",map.get("weeks"));
+            temp.put("city","分公司合计");
+            BigDecimal jtl = new BigDecimal(Double.parseDouble(map.get("jtl").toString()));
+            double temperature = jtl.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp.put("temperature",temperature);
+
+            zhuanbiV1Data.add(temp);
+
+//            分析第三个图的信息
+            Map temp01 = new HashMap();
+            temp01.put("label",map.get("weeks"));
+            temp01.put("type","总接通");
+            BigDecimal phoneDone = new BigDecimal(Double.parseDouble(map.get("phoneDone") != null ? map.get("phoneDone").toString() : "0" ));
+//            double amount30 = s30.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp01.put("value",phoneDone);
+            zhuanbiV3Data.add(temp01);
+
+
+            Map temp02 = new HashMap();
+            temp02.put("label",map.get("weeks"));
+            temp02.put("type","30s");
+            BigDecimal s30 = new BigDecimal(Double.parseDouble(map.get("amount30") != null ? map.get("amount30").toString() : "0" ));
+//            double amount30 = s30.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp02.put("value",s30);
+            zhuanbiV3Data.add(temp02);
+
+            Map temp03 = new HashMap();
+            temp03.put("label",map.get("weeks"));
+            temp03.put("type","60s");
+            BigDecimal s60 = new BigDecimal(Double.parseDouble(map.get("amount60") != null ? map.get("amount60").toString() : "0" ));
+//            int amount60 = map.get("amount60") != null ?  (int)map.get("amount60") : 0;
+            temp03.put("value",s60);
+            zhuanbiV3Data.add(temp03);
+
+
+        }
+
+        for(Map map : dayCompareInfo){
+//            分析第一个视图的部门数据
+            Map temp = new HashMap();
+            temp.put("month",map.get("weeks"));
+            temp.put("city",map.get("sname"));
+            BigDecimal jtl = new BigDecimal(Double.parseDouble(map.get("jtl")!= null ? map.get("jtl").toString() :  "0" ));
+            double temperature = jtl.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp.put("temperature",temperature);
+//            temp.put("city",Double.parseDouble(map.get("jtl").toString()));
+            zhuanbiV1Data.add(temp);
+
+
+//            分析第二个视图的数据
+            Map temp02 = new HashMap();
+            temp02.put("name",map.get("sname"));
+            BigDecimal phoneAmount = new BigDecimal(Double.parseDouble(map.get("pdavg")!= null ? map.get("pdavg").toString() :  "0" ));
+            double amount = phoneAmount.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp02.put("接通量",amount);
+            temp02.put("时间",map.get("weeks"));
+            zhuanbiV2Data.add(temp02);
+
+
+//            分析第四个图的数据
+            Map temp04 = new HashMap();
+            temp04.put("name",map.get("sname"));
+            BigDecimal phoneTime = new BigDecimal(Double.parseDouble(map.get("phoneTime")!= null ? map.get("phoneTime").toString() :  "0" ));
+            double time = phoneTime.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp04.put("接通量",time);
+            temp04.put("时间",map.get("weeks"));
+            zhuanbiV4Data.add(temp04);
+
+        }
+        weekCompareData.put("zhuanbiV1Data",zhuanbiV1Data);
+        weekCompareData.put("zhuanbiV2Data",zhuanbiV2Data);
+        weekCompareData.put("zhuanbiV3Data",zhuanbiV3Data);
+        weekCompareData.put("zhuanbiV4Data",zhuanbiV4Data);
+        return weekCompareData;
     }
 
     //    小图分析方法

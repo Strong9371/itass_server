@@ -39,6 +39,10 @@ public interface DggMapper {
     List findDayCompareJtlv(JSONObject regObject);
     List findDayCompareInfo(JSONObject regObject);
 
+//    周环比数据
+    List findWeekCompareJtlv(JSONObject regObject);
+    List findWeekCompareInfo(JSONObject regObject);
+
 
 
 }
