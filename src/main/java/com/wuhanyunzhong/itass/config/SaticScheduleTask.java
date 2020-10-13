@@ -67,7 +67,11 @@ public class SaticScheduleTask {
 
             }
         }else if(isHourAddFirst < h ) {
-            isHourAddFirst = h;
+            if(h>= 23){
+                isHourAddFirst = 20;
+            }else {
+                isHourAddFirst = h;
+            }
         }
         System.err.println(h);
         System.err.println(isHourAddFirst);
@@ -122,7 +126,6 @@ public class SaticScheduleTask {
 
             byte[] buf = new byte[4096];
             int length = bis.read(buf);
-            System.err.println(length);
             //保存文件
             while(length != -1)
             {
@@ -167,7 +170,6 @@ public class SaticScheduleTask {
 
             byte[] buf = new byte[4096];
             int length = bis.read(buf);
-            System.err.println(length);
             //保存文件
             while(length != -1)
             {
@@ -180,7 +182,6 @@ public class SaticScheduleTask {
             conn01.disconnect();
             Integer isAdd = 0;
             do {
-                System.err.println(isAdd);
                 Integer addjtl = addjtl(filePath + jtlTime + ".xlsx");
                 isAdd = addjtl;
             }while (isAdd < 1);
