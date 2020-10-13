@@ -28,8 +28,7 @@ public class HourDataListener extends AnalysisEventListener<JtlDate> {
     @Override
     public void invoke(JtlDate data, AnalysisContext context) {
         Calendar calendar = Calendar.getInstance();
-        int h = calendar.get(Calendar.HOUR_OF_DAY);
-
+        int h = SaticScheduleTask.isHourAddFirst;
         if(data.getFname().equals("合计")){
             data.setSname("合计");
         }

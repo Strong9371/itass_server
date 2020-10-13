@@ -420,7 +420,6 @@ public class DggServiceImpl implements DggService {
         List zhuanbiV2Data = new LinkedList();
         List zhuanbiV3Data = new LinkedList();
         List zhuanbiV4Data = new LinkedList();
-        System.err.println(dggObject);
         List<Map> dayCompareJtlv = dggMapper.findWeekCompareJtlv(dggObject);
         List<Map> dayCompareInfo = dggMapper.findWeekCompareInfo(dggObject);
 
