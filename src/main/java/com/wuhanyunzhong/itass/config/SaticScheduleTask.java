@@ -31,7 +31,7 @@ public class SaticScheduleTask {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    public static String downLordUrl = "51670";
+    public static String downLordUrl = "10252";
     public static List<DepartDate> firstData;
     public static List<JtlDate> jtlDates;
     public String isAddFirst = "";
