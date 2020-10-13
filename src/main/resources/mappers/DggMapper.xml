@@ -167,28 +167,28 @@
 <!--	通过一级部门查询所有数据-->
 	<select id="findData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT dhl.fname,dhl.sname,dhl.phoneTime,dhl.phoneAmount,dhl.phoneDone,dhl.amount30,dhl.amount60,dm.costFix
-		<if test="h &gt; 9">
+		<if test="h &gt; 8">
 			, IFNULL(dhl.time10,0)  as time10
 		</if>
-		<if test="h &gt; 10">
+		<if test="h &gt; 9">
 			, (dhl.time11 - IFNULL(dhl.time10 , 0)) as time11
 		</if>
-		<if test="h &gt; 11">
+		<if test="h &gt; 10">
 			, (dhl.time12 -IFNULL(dhl.time11,0) ) as time12
 		</if>
-		<if test="h &gt; 14">
+		<if test="h &gt; 11">
 			, (dhl.time15 - IFNULL(dhl.time12,0) ) as time15
 		</if>
-		<if test="h &gt; 15">
+		<if test="h &gt; 14">
 			, (dhl.time16 - IFNULL(dhl.time15,0) ) as time16
 		</if>
-		<if test="h &gt; 16">
+		<if test="h &gt; 15">
 			, (dhl.time17 - IFNULL(dhl.time16,0) ) as time17
 		</if>
-		<if test="h &gt; 17">
+		<if test="h &gt; 16">
 			, (dhl.time18 - IFNULL(dhl.time17,0) ) as time18
 		</if>
-		<if test="h &gt; 19">
+		<if test="h &gt; 17">
 			, (dhl.time20 - IFNULL(dhl.time18,0) ) as time20
 		</if>
 
@@ -210,28 +210,28 @@
 	<select id="findPeakData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT fname, sum(phoneTime) as phoneTime,sum(phoneAmount) as totalJtl,sum(phoneDone) as jietongliang,
 				sum(amount30) as amount30, sum(amount60) as amount60
-		<if test="h &gt; 9">
+		<if test="h &gt; 8">
 			, IFNULL(sum(time10),0) as "10:00"
 		</if>
-		<if test="h &gt; 10">
+		<if test="h &gt; 9">
 			, (sum(time11)-IFNULL(sum(time10),0)) as "11:00"
 		</if>
-		<if test="h &gt; 11">
+		<if test="h &gt; 10">
 			, (sum(time12)-IFNULL(sum(time11),0)) as "12:00"
 		</if>
-		<if test="h &gt; 14">
+		<if test="h &gt; 11">
 			, (sum(time15)-IFNULL(sum(time12),0)) as "15:00"
 		</if>
-		<if test="h &gt; 15">
+		<if test="h &gt; 14">
 			,(sum(time16)-IFNULL(sum(time15),0)) as "16:00"
 		</if>
-		<if test="h &gt; 16">
+		<if test="h &gt; 15">
 			, (sum(time17)-IFNULL(sum(time16),0)) as "17:00"
 		</if>
-		<if test="h &gt; 17">
+		<if test="h &gt; 16">
 			, (sum(time18)-IFNULL(sum(time17),0)) as "18:00"
 		</if>
-		<if test="h &gt; 19">
+		<if test="h &gt; 17">
 			, (sum(time20)-IFNULL(sum(time18),0)) as "20:00"
 		</if>
 

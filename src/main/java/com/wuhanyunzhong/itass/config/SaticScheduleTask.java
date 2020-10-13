@@ -31,13 +31,14 @@ public class SaticScheduleTask {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    public static String downLordUrl = "51670";
+
+    public static String downLordUrl = "49311";
     public static List<DepartDate> firstData;
     public static List<JtlDate> jtlDates;
-    public String isAddFirst = "";
+    public static int isHourAddFirst = 1;
 
     //3.添加定时任务
-    @Scheduled(cron = "0 0 9,10,11,12,15,16,17,18,19,20 * * ?")
+    @Scheduled(cron = "0 0/1 9,10,11,12,15,16,17,18,20 * * ?")
     private void configureTasks() {
         Calendar calendar = Calendar.getInstance();
 
@@ -57,7 +58,19 @@ public class SaticScheduleTask {
         int day = calendar.get(Calendar.DATE);
 
         int h = calendar.get(Calendar.HOUR_OF_DAY);
+        if(isHourAddFirst >= h){
+            if(h < 18 ||  h == 20){
+                h += 1;
+                isHourAddFirst = h;
+            }else {
+                isHourAddFirst = h;
 
+            }
+        }else if(isHourAddFirst < h ) {
+            isHourAddFirst = h;
+        }
+        System.err.println(h);
+        System.err.println(isHourAddFirst);
         if(null == firstData){
             String filePath = "src/main/webapp/temporary/depart.xlsx";
             EasyExcel.read(filePath, DepartDate.class, new DemoDataListener()).sheet().headRowNumber(0).doRead();
