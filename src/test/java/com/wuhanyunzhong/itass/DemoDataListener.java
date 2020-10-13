@@ -2,27 +2,33 @@ package com.wuhanyunzhong.itass;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.wuhanyunzhong.itass.config.SaticScheduleTask;
+import com.wuhanyunzhong.itass.controller.testController;
+import com.wuhanyunzhong.itass.service.DggService;
+import com.wuhanyunzhong.itass.service.impl.DggServiceImpl;
+import com.wuhanyunzhong.itass.util.DataInterface;
+import com.wuhanyunzhong.itass.util.DepartDate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
-public class DemoDataListener extends AnalysisEventListener<DemoData> {
-//    private static final Logger LOGGER = LoggerFactory.getLogger(DemoDataListener.class);
-    /**
-     * 每隔5条存储数据库，实际使用中可以3000条，然后清理list ，方便内存回收
-     */
+public class DemoDataListener extends AnalysisEventListener<DepartDate> {
+
+//    @Autowired
+//    DggService dggService;
+
     private static final int BATCH_COUNT = 5;
-    List<DemoData> list = new ArrayList<DemoData>();
-    /**
-     * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
-     */
+    //    List<DepartDate> list = new ArrayList<DepartDate>();
+    List<Map> list = new ArrayList<Map>();
 
-    /**
-     * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
-     *
-     * @param demoDAO
-     */
+    String fd = "合计";
+    int pid = 1 ;
+    int id = 1 ;
+
 
     /**
      * 这个每一条数据解析都会来调用
@@ -32,15 +38,36 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
      * @param context
      */
     @Override
-    public void invoke(DemoData data, AnalysisContext context) {
-        System.err.println(context);
-        System.err.println(data);
-        list.add(data);
-        // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
-        if (list.size() >= BATCH_COUNT) {
-            saveData();
-            // 存储完成清理 list
-            list.clear();
+    public void invoke(DepartDate data, AnalysisContext context) {
+//        list.add(data);
+
+        Map mapTemp = new HashMap();
+
+
+
+        if(! data.getFname().equals(fd)){
+            fd = data.getFname();
+            mapTemp.put("pid",1);
+            mapTemp.put("name",data.getFname());
+            pid = id;
+
+
+            list.add(mapTemp);
+            id ++ ;
+
+
+            Map seMap = new HashMap();
+            seMap.put("pid",pid);
+            seMap.put("name",data.getSname());
+            list.add(seMap);
+            id ++ ;
+
+        }else{
+            mapTemp.put("pid",pid);
+            mapTemp.put("name",data.getSname());
+            list.add(mapTemp);
+            id ++ ;
+
         }
     }
     /**
@@ -58,6 +85,9 @@ public class DemoDataListener extends AnalysisEventListener<DemoData> {
      * 加上存储数据库
      */
     private void saveData() {
+//        SaticScheduleTask.firstData = list;
+        testController.allDepart = list;
+
     }
 }
 

@@ -153,6 +153,19 @@ public class DggController extends BaseController{
         return jr;
     }
 
+    @GetMapping("getPartCompareInfo")
+    @ResponseBody
+    public JsonResult getPartCompareInfo(@RequestParam String formdata){
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+
+        JsonResult jr = new JsonResult();
+
+        Map partCompare = dggService.findPartCompareInfo(dggObject);
+        jr.setState(SUCCESS);
+        jr.setMessage("查询成功");
+        jr.setData(partCompare);
+        return jr;
+    }
 
     /**
      * 递归处理   数据库树结构数据->树形json

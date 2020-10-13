@@ -32,13 +32,13 @@ public class SaticScheduleTask {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    public static String downLordUrl = "49311";
+    public static String downLordUrl = "36100";
     public static List<DepartDate> firstData;
     public static List<JtlDate> jtlDates;
     public static int isHourAddFirst = 1;
 
     //3.添加定时任务
-    @Scheduled(cron = "0 0/1 9,10,11,12,15,16,17,18,20 * * ?")
+    @Scheduled(cron = "0 0/1 9,10,11,12,15,16,17,18,20,23 * * ?")
     private void configureTasks() {
         Calendar calendar = Calendar.getInstance();
 
@@ -59,11 +59,11 @@ public class SaticScheduleTask {
 
         int h = calendar.get(Calendar.HOUR_OF_DAY);
         if(isHourAddFirst >= h){
-            if(h < 18 ||  h == 20){
+            if(h < 18 ){
                 h += 1;
                 isHourAddFirst = h;
             }else {
-                isHourAddFirst = h;
+                isHourAddFirst = 20;
 
             }
         }else if(isHourAddFirst < h ) {

@@ -83,7 +83,7 @@ public class DemoDataListener extends AnalysisEventListener<DepartDate> {
      */
     private void saveData() {
         SaticScheduleTask.firstData = list;
-        testController.firstData = list;
+//        testController.firstData = list;
 
     }
 }
