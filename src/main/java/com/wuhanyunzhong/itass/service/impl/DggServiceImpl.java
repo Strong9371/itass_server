@@ -506,7 +506,16 @@ public class DggServiceImpl implements DggService {
         List outV1Data01all = new LinkedList();
         List outV1Data01part = new LinkedList();
 
+//        接通率排名
+        List outV2Data = new LinkedList();
+//        接通量排名
+        List outV3Data = new LinkedList();
+//        60秒接通排名
+        List outV4Data = new LinkedList();
+        Map outAllData = new HashMap();
+
         List<Map> partCompareInfo = dggMapper.findPartCompareInfo(dggObject);
+//        List<Map> findPartCompareInfo02 = dggMapper.findPartCompareInfo02(dggObject);
         System.err.println(partCompareInfo);
 
 //        分析外比第一个视图的数据
@@ -519,24 +528,77 @@ public class DggServiceImpl implements DggService {
             double temperature = jtl.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             temp.put("temperature",temperature);
 
-            if("合计".equals(map.get("fname"))){
-                outV1Data01all.add(temp);
+            Map v2 = new HashMap();
+            Map v3 = new HashMap();
+            Map v4 = new HashMap();
+            Map v5 = new HashMap();
+
+            if("合计".equals(map.get("fname").toString())){
+                outV1Data01all.add(temp);if(dggObject.get("viewDate").toString().equals(map.get("changeDate").toString())){
+                    v2.put("name",map.get("fname"));
+                    v2.put("total",jtl);
+                    outAllData.put("jtlAll",map);
+                }
             }else{
                 outV1Data01part.add(temp);
-            }
-        }
-        outV1Data01all.addAll(outV1Data01part);
-//        Collections.sort(outV1Data,new Comparator<Map>(){
-//
-//            public int compare(Map o1, Map o2) {
-//                Double l1 = o1.get("temperature")
-//                return len1-len2;
-//            }
-//        });
+                if(dggObject.get("viewDate").toString().equals(map.get("changeDate").toString())){
+                    v2.put("name",map.get("fname"));
+                    v2.put("total",jtl);
+                    outV2Data.add(v2);
 
+
+                    v3.put("country",map.get("fname"));
+                    v3.put("population",Double.parseDouble((map.get("phoneDone") != null ? map.get("phoneDone") : 0).toString()));
+                    outV3Data.add(v3);
+
+                    v4.put("country",map.get("fname"));
+                    v4.put("amount",map.get("amount30"));
+                    v4.put("type","30s");
+
+                    v5.put("country",map.get("fname"));
+                    v5.put("amount",map.get("amount60"));
+                    v5.put("type","60s");
+                    outV4Data.add(v4);
+                    outV4Data.add(v5);
+                }
+            }
+
+        }
+        //第一个视图合计加上其他
+        outV1Data01all.addAll(outV1Data01part);
+
+//        第二个数据排序
+        Collections.sort(outV2Data,new Comparator<Map>(){
+
+            public int compare(Map o1, Map o2) {
+                BigDecimal l1bd = new BigDecimal(Double.parseDouble(o1.get("total").toString())*1000);
+                double l1d = l1bd.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+                int l1 = (int)l1d;
+                BigDecimal l2bd = new BigDecimal(Double.parseDouble(o2.get("total").toString())*1000);
+                double l2d = l2bd.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
+                int l2 = (int)l2d;
+                return l2-l1;
+            }
+        });
+
+        Collections.sort(outV3Data,new Comparator<Map>(){
+
+            public int compare(Map o1, Map o2) {
+                double dl1 =Double.parseDouble( o1.get("population").toString());
+                double dl2 =Double.parseDouble( o2.get("population").toString());
+                int l1 = (int)dl1;
+                int l2 = (int)dl2;
+                return l2-l1;
+            }
+        });
 
 
         partCompareData.put("outV1Data",outV1Data01all);
+        partCompareData.put("outV2Data",outV2Data);
+        partCompareData.put("outV3Data",outV3Data);
+        partCompareData.put("outV4Data",outV4Data);
+
+        partCompareData.put("outAllData",outAllData);
         return partCompareData;
     }
 

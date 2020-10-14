@@ -43,6 +43,7 @@ public interface DggMapper {
     List findWeekCompareJtlv(JSONObject regObject);
     List findWeekCompareInfo(JSONObject regObject);
     List findPartCompareInfo(JSONObject regObject);
+    List findPartCompareInfo02(JSONObject regObject);
 
 
 

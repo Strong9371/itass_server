@@ -344,17 +344,20 @@
 	<select id="findPartCompareInfo" resultType="Map" parameterType="Map">
 		SELECT fname ,
 		SUM(phoneDone)/SUM(phoneAmount) AS jtl,
+		SUM(phoneDone) AS phoneDone,
+		sum(amount30) as amount30,
+		sum(amount60) as amount60,
 		date(changeDate) AS changeDate
 		 FROM dianhualiang
-		 WHERE  DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(changeDate)
+		 WHERE  DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(#{viewDate})
 		GROUP by fname,date(changeDate)
 
 	</select>
 
 
-	<!--	查询分公司之间比较-->
+	<!--	查询选中日期的分公司之间比较-->
 	<select id="findPartCompareInfo02" resultType="Map" parameterType="Map">
-		SELECT fname ,SUM(phoneTime) AS phoneTime,
+		SELECT fname,sname,SUM(phoneTime) AS phoneTime,
 		SUM(phoneAmount) AS phoneAmount,
 		SUM(phoneDone) AS phoneDone,
 		SUM(phoneDone)/SUM(phoneAmount) AS jtl,
@@ -362,8 +365,9 @@
 		sum(amount60) as amount60,
 		date(changeDate) AS changeDate
 		 FROM dianhualiang
-		 WHERE  DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(changeDate)
-		GROUP by fname,date(changeDate)
+		 WHERE  date(changeDate) = #{viewDate}
+		GROUP by sname,date(changeDate)
+
 
 	</select>
 
