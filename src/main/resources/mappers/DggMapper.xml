@@ -253,7 +253,7 @@
 			SELECT SUM(dhl.phoneTime) AS phoneTime,
 				SUM(dhl.phoneDone) AS pdavg,
 				SUM(dhl.phoneAmount) AS paavg,
-				SUM(dhl.phoneDone)/SUM(phoneAmount) AS jtl,
+				SUM(dhl.phoneDone)/SUM(dhl.phoneAmount) AS jtl,
 				SUM(dhl.amount30) AS amount30,
 				SUM(dhl.amount60) AS amount60,
 				SUM(dm.costFix*((dhl.phoneDone-dhl.amount60) + dhl.amount60*4) ) AS costAmount
@@ -335,6 +335,35 @@
 		GROUP BY sname , weeks
 
 
+
+	</select>
+
+
+
+<!--	查询分公司之间比较-->
+	<select id="findPartCompareInfo" resultType="Map" parameterType="Map">
+		SELECT fname ,
+		SUM(phoneDone)/SUM(phoneAmount) AS jtl,
+		date(changeDate) AS changeDate
+		 FROM dianhualiang
+		 WHERE  DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(changeDate)
+		GROUP by fname,date(changeDate)
+
+	</select>
+
+
+	<!--	查询分公司之间比较-->
+	<select id="findPartCompareInfo02" resultType="Map" parameterType="Map">
+		SELECT fname ,SUM(phoneTime) AS phoneTime,
+		SUM(phoneAmount) AS phoneAmount,
+		SUM(phoneDone) AS phoneDone,
+		SUM(phoneDone)/SUM(phoneAmount) AS jtl,
+		sum(amount30) as amount30,
+		sum(amount60) as amount60,
+		date(changeDate) AS changeDate
+		 FROM dianhualiang
+		 WHERE  DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(changeDate)
+		GROUP by fname,date(changeDate)
 
 	</select>
 

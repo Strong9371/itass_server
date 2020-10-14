@@ -39,4 +39,6 @@ public interface DggService {
     public Map getDayCompare(JSONObject dggObject);
     public Map getWeekCompare(JSONObject dggObject);
 
+    public Map findPartCompareInfo(JSONObject dggObject);
+
 }

@@ -11,10 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CacheConfig()
 @Service
@@ -94,7 +91,6 @@ public class DggServiceImpl implements DggService {
 //    public Map findData(JSONObject dggObject) {
 //        Map result = new HashMap();
 //        List<Map> data = dggMapper.findData(dggObject);
-//        System.err.println(data);
 //        Map costLimit = dggMapper.findCost(dggObject);
 //        List<Map> jietongliang = new LinkedList<>();
 ////        30s、60s的相关数据
@@ -423,9 +419,6 @@ public class DggServiceImpl implements DggService {
         List<Map> dayCompareJtlv = dggMapper.findWeekCompareJtlv(dggObject);
         List<Map> dayCompareInfo = dggMapper.findWeekCompareInfo(dggObject);
 
-        System.err.println(dayCompareJtlv);
-        System.err.println(dayCompareInfo);
-
 //        合计信息
         for(Map map : dayCompareJtlv){
 //            分析第一个图的合计信息
@@ -504,6 +497,47 @@ public class DggServiceImpl implements DggService {
         weekCompareData.put("zhuanbiV3Data",zhuanbiV3Data);
         weekCompareData.put("zhuanbiV4Data",zhuanbiV4Data);
         return weekCompareData;
+    }
+
+    @Override
+    public Map findPartCompareInfo(JSONObject dggObject) {
+        Map partCompareData = new HashMap();
+
+        List outV1Data01all = new LinkedList();
+        List outV1Data01part = new LinkedList();
+
+        List<Map> partCompareInfo = dggMapper.findPartCompareInfo(dggObject);
+        System.err.println(partCompareInfo);
+
+//        分析外比第一个视图的数据
+        for(Map map : partCompareInfo){
+            Map temp = new HashMap();
+            temp.put("month",map.get("changeDate").toString().replaceFirst("-",""));
+            temp.put("city",map.get("fname"));
+            String jtlSt = map.get("jtl") != null ? map.get("jtl").toString() : "0";
+            BigDecimal jtl = new BigDecimal(Double.parseDouble(jtlSt));
+            double temperature = jtl.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            temp.put("temperature",temperature);
+
+            if("合计".equals(map.get("fname"))){
+                outV1Data01all.add(temp);
+            }else{
+                outV1Data01part.add(temp);
+            }
+        }
+        outV1Data01all.addAll(outV1Data01part);
+//        Collections.sort(outV1Data,new Comparator<Map>(){
+//
+//            public int compare(Map o1, Map o2) {
+//                Double l1 = o1.get("temperature")
+//                return len1-len2;
+//            }
+//        });
+
+
+
+        partCompareData.put("outV1Data",outV1Data01all);
+        return partCompareData;
     }
 
     //    小图分析方法
@@ -864,7 +898,6 @@ public class DggServiceImpl implements DggService {
 
         Map result = new HashMap();
         result.put("leftData",leftViewData);
-        System.err.println(leftViewData);
         result.put("rightData",rightViewData);
         result.put("leftdwData",leftdwViewData);
         result.put("timeViewData",timeViewData);
