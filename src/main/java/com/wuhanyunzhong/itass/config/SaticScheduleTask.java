@@ -32,7 +32,7 @@ public class SaticScheduleTask {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    public static String downLordUrl = "49311";
+    public static String downLordUrl = "95245";
     public static List<DepartDate> firstData;
     public static List<JtlDate> jtlDates;
     public static int isHourAddFirst = 1;
