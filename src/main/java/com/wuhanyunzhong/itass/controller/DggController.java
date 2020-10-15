@@ -30,31 +30,40 @@ public class DggController extends BaseController{
     public JsonResult login(@RequestParam String formdata){
         JSONObject dggObject = JSONObject.parseObject(formdata);
         JsonResult jr = new JsonResult();
-
         Map byname = dggService.findByname(dggObject);
-        boolean matches = bp.matches(dggObject.getString("password"), (String) byname.get("password"));
-        if(matches){
-//            登录成功
-            String token = "Authorization:" + Math.random();
-
-            Map result = new HashMap();
-            result.put("user",byname);
-            result.put("token",token);
-
-//            添加token
-            dggObject.put("token",token);
-            dggService.upToken(dggObject);
-
-            jr.setState(SUCCESS);
-            jr.setMessage("登录成功");
-            jr.setData(result);
-
-
-        }else{
+        dggObject.put("isAd",byname.get("isAd"));
+        List router = dggService.findRouter(dggObject);
+        if(byname == null){
             jr.setState(ERROR);
             jr.setMessage("账户名或密码错误");
             jr.setMessage("账户名或密码错误");
+        }else{
+            boolean matches = bp.matches(dggObject.getString("password"), (String) byname.get("password"));
+            if(matches){
+//            登录成功
+                String token = "Authorization:" + Math.random();
+                byname.remove("password");
+
+                Map result = new HashMap();
+                result.put("user",byname);
+                result.put("token",token);
+                result.put("router",router);
+//            添加token
+                dggObject.put("token",token);
+                dggService.upToken(dggObject);
+
+                jr.setState(SUCCESS);
+                jr.setMessage("登录成功");
+                jr.setData(result);
+
+
+            }else{
+                jr.setState(ERROR);
+                jr.setMessage("账户名或密码错误");
+                jr.setMessage("账户名或密码错误");
+            }
         }
+
         return jr;
     }
 
@@ -163,6 +172,27 @@ public class DggController extends BaseController{
         jr.setState(SUCCESS);
         jr.setMessage("查询成功");
         jr.setData(partCompare);
+        return jr;
+    }
+
+
+    /**
+     * 设置页获取信息
+     */
+    @GetMapping("getSet")
+    @ResponseBody
+    public JsonResult getSet(@RequestParam String formdata){
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+
+
+
+
+
+        JsonResult jr = new JsonResult();
+
+        jr.setState(SUCCESS);
+        jr.setMessage("查询成功");
+        jr.setData(null);
         return jr;
     }
 

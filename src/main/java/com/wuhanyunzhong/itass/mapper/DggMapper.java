@@ -26,6 +26,7 @@ public interface DggMapper {
 
 
     Map findByname(JSONObject regObject);
+    List findRouter(JSONObject regObject);
 
     Integer upToken(JSONObject regObject);
 

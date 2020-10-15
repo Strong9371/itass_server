@@ -22,6 +22,9 @@ public interface DggService {
     public Integer insertJtl(List partList);
     public Integer upData(List partList);
     public Map findByname(JSONObject dggObject);
+
+    public List findRouter(JSONObject dggObject);
+
     public Integer upToken(JSONObject dggObject);
 
     public List findAllde(JSONObject dggObject);
