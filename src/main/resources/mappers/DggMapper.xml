@@ -295,7 +295,7 @@
 		FROM dianhualiang as dhl
 		left join department as dm on dhl.sname=dm.pname
 		WHERE fname = #{pname}
-		AND   DATE_SUB(CURDATE(), INTERVAL (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(dhl.changeDate)
+		AND   DATE_SUB(CURDATE(), INTERVAL (#{limit}-1)  DAY)
 		order BY dhl.changeDate
 
 	</select>
@@ -331,7 +331,7 @@
 		FROM dianhualiang as dhl
 		left join department as dm on dhl.sname=dm.pname
 		WHERE fname = #{pname}
-		AND   DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(dhl.changeDate)
+		AND   DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY)
 		GROUP BY sname , weeks
 
 
@@ -349,7 +349,8 @@
 		sum(amount60) as amount60,
 		date(changeDate) AS changeDate
 		 FROM dianhualiang
-		 WHERE  DATE_SUB(CURDATE(), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> date(#{viewDate})
+		 WHERE  DATE_SUB( STR_TO_DATE(#{viewDate},'%Y-%m-%d'), INTERVAL  (#{limit}-1)  DAY) <![CDATA[ <= ]]> changeDate
+		AND  STR_TO_DATE(date(changeDate) ,'%Y-%m-%d') <![CDATA[ <= ]]> STR_TO_DATE(#{viewDate},'%Y-%m-%d')
 		GROUP by fname,date(changeDate)
 
 	</select>
