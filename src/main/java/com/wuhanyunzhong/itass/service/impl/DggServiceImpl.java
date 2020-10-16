@@ -58,7 +58,7 @@ public class DggServiceImpl implements DggService {
     }
 
     @Override
-    @CacheEvict(value = "jtlPeak")
+//    @CacheEvict(value = "jtlPeak")
     public Integer upData(List partList) {
         Integer integer = dggMapper.upData(partList);
         return integer;
@@ -68,6 +68,27 @@ public class DggServiceImpl implements DggService {
     public Map findByname(JSONObject dggObject) {
         Map byname = dggMapper.findByname(dggObject);
         return byname;
+    }
+
+    @Override
+    public List findRouter(JSONObject dggObject) {
+        List<Map> router = dggMapper.findRouter(dggObject);
+
+        List children = new LinkedList();
+        for(Map map : router){
+            Map temp = new HashMap();
+            String[] children1 = map.get("children").toString().split(",");
+            List<String> list = Arrays.asList(children1);
+            temp.put("router",map.get("router"));
+            temp.put("childrn",list);
+            children.add(temp);
+        }
+        Map result = new HashMap();
+        result.put("router","root");
+        result.put("children",children);
+        List res = new LinkedList();
+        res.add(result);
+        return res;
     }
 
     @Override

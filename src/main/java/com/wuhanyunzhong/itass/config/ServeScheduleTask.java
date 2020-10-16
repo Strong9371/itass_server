@@ -30,7 +30,7 @@ public class ServeScheduleTask {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    public static String downLordUrl = "13591";
+    public static String downLordUrl = "20326";
 
 //    @Scheduled(cron = "*/30 * * * * ?")
     private void serveTasks(){
