@@ -183,16 +183,14 @@ public class DggController extends BaseController{
     @ResponseBody
     public JsonResult getSet(@RequestParam String formdata){
         JSONObject dggObject = JSONObject.parseObject(formdata);
-
-
-
-
+        Map set = dggService.getSet(dggObject);
+        System.err.println(set);
 
         JsonResult jr = new JsonResult();
 
         jr.setState(SUCCESS);
         jr.setMessage("查询成功");
-        jr.setData(null);
+        jr.setData(set);
         return jr;
     }
 

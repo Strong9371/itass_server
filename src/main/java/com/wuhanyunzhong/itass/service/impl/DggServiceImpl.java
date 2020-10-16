@@ -80,7 +80,7 @@ public class DggServiceImpl implements DggService {
             String[] children1 = map.get("children").toString().split(",");
             List<String> list = Arrays.asList(children1);
             temp.put("router",map.get("router"));
-            temp.put("childrn",list);
+            temp.put("children",list);
             children.add(temp);
         }
         Map result = new HashMap();
@@ -634,6 +634,35 @@ public class DggServiceImpl implements DggService {
 
         partCompareData.put("outAllData", outAllData);
         return partCompareData;
+    }
+
+    @Override
+    public Map getSet(JSONObject dggObject) {
+        List<Map> userByPid = dggMapper.userByPid(dggObject);
+        if(userByPid.size() >= 1){
+            int key = 0;
+            for(Map map:userByPid){
+                key ++;
+                map.put("editable",false) ;
+                map.put("key",key) ;
+                switch((int)map.get("isadmin")){
+                    case 0:
+                        map.put("isadmin","普通成员");
+                        break;
+                    case 1:
+                        map.put("isadmin","分公司管理员");
+                        break;
+                    case 2:
+                        map.put("isadmin","系统管理员");
+                        break;
+                }
+            }
+        }
+        List departByPid = dggMapper.departByPid(dggObject);
+        Map getSet = new HashMap();
+        getSet.put("userByPid",userByPid);
+        getSet.put("departByPid",departByPid);
+        return getSet;
     }
 
     //    小图分析方法

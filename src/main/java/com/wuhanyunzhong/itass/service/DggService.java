@@ -44,4 +44,5 @@ public interface DggService {
 
     public Map findPartCompareInfo(JSONObject dggObject);
 
+    public Map getSet(JSONObject dggObject);
 }

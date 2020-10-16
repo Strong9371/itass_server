@@ -46,6 +46,7 @@ public interface DggMapper {
     List findPartCompareInfo(JSONObject regObject);
     List findPartCompareInfo02(JSONObject regObject);
 
-
-
+//设置页的相关方法
+    List userByPid(JSONObject regObject);
+    List departByPid(JSONObject regObject);
 }
