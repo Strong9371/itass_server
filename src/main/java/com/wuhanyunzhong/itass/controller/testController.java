@@ -48,9 +48,7 @@ public class testController {
 //        String filePath = "src/main/webapp/temporary/jtl01.xlsx";
 //        File file =  new File(filePath);
 //        EasyExcel.read(filePath, JtlDate.class, new HourDataListener()).sheet().headRowNumber(3).doRead();
-//        System.err.println(jtlDates.size());
 //        Integer integer = dggService.upData(jtlDates);
-//        System.err.println(integer);
 
 
 //     添加事业部信息
@@ -58,7 +56,7 @@ public class testController {
         String filePath = "src/main/webapp/temporary/depart.xlsx";
         EasyExcel.read(filePath, DepartDate.class, new DemoDataListener()).sheet().headRowNumber(0).doRead();
         Integer integer = dggService.insertDepart(allDepart);
-        System.err.println(integer);
+
     }
 
     void test02(){

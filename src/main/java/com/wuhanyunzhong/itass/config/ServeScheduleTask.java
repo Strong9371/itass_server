@@ -30,46 +30,52 @@ public class ServeScheduleTask {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
-    public static String downLordUrl = "20326";
+    public static String downLordUrl = "85144";
+    public static int startSerTask = 0;
 
-//    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "*/30 * * * * ?")
     private void serveTasks(){
-        System.err.println(new Date().getTime());
-        stringRedisTemplate.opsForValue().get("isaddFirst");
-        String time = String.valueOf(new Date().getTime());
+
+        if(startSerTask == 1){
+
+            stringRedisTemplate.opsForValue().get("isaddFirst");
+            String time = String.valueOf(new Date().getTime());
 
 
-        HttpURLConnection conn02 = null;
-        InputStream inputStream = null;
-        try {
-            // 建立链接
-            URL serveUrl=new URL("https://biapi.dgg188.cn/ReportServer?sessionID="+downLordUrl+"&_="+time);
-            conn02=(HttpURLConnection) serveUrl.openConnection();
+            HttpURLConnection conn02 = null;
+            InputStream inputStream = null;
+            try {
+                // 建立链接
+                URL serveUrl=new URL("https://biapi.dgg188.cn/ReportServer?sessionID="+downLordUrl+"&_="+time);
+                conn02=(HttpURLConnection) serveUrl.openConnection();
 
-            conn02.setDoInput(true);
-            conn02.setDoOutput(true);
+                conn02.setDoInput(true);
+                conn02.setDoOutput(true);
 
-            //连接指定的资源
-            conn02.connect();
-            inputStream=conn02.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(inputStream);
+                //连接指定的资源
+                conn02.connect();
+                inputStream=conn02.getInputStream();
+                BufferedInputStream bis = new BufferedInputStream(inputStream);
 
-            byte[] buf = new byte[4096];
-            int length = bis.read(buf);
-            //保存文件
-            while(length != -1)
+                byte[] buf = new byte[4096];
+                int length = bis.read(buf);
+                //保存文件
+                while(length != -1)
+                {
+                    length = bis.read(buf);
+                }
+                bis.close();
+                inputStream.close();
+                sleep(2000);
+                conn02.disconnect();
+
+
+            }catch (Exception e)
             {
-                length = bis.read(buf);
+                e.printStackTrace();
             }
-            bis.close();
-            inputStream.close();
-            sleep(2000);
-            conn02.disconnect();
-
-
-        }catch (Exception e)
-        {
-            e.printStackTrace();
+        }else{
+            return;
         }
     }
 

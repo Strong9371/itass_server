@@ -45,4 +45,9 @@ public interface DggService {
     public Map findPartCompareInfo(JSONObject dggObject);
 
     public Map getSet(JSONObject dggObject);
+
+    public int setUser(JSONObject dggObject);
+    public int regUser(JSONObject dggObject);
+    public int delUser(JSONObject dggObject);
+    public int setMoney(List dggObject);
 }

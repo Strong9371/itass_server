@@ -1,6 +1,8 @@
 package com.wuhanyunzhong.itass.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wuhanyunzhong.itass.config.SaticScheduleTask;
+import com.wuhanyunzhong.itass.config.ServeScheduleTask;
 import com.wuhanyunzhong.itass.service.DggService;
 import com.wuhanyunzhong.itass.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +27,25 @@ public class DggController extends BaseController{
     @Autowired
     DggService dggService;
 
+    @GetMapping(value = "showReg")
+    public String showReg(){
+        return "//no1.html";
+    }
+
     @GetMapping("login")
     @ResponseBody
     public JsonResult login(@RequestParam String formdata){
         JSONObject dggObject = JSONObject.parseObject(formdata);
         JsonResult jr = new JsonResult();
         Map byname = dggService.findByname(dggObject);
-        dggObject.put("isAd",byname.get("isAd"));
-        List router = dggService.findRouter(dggObject);
+
         if(byname == null){
             jr.setState(ERROR);
             jr.setMessage("账户名或密码错误");
             jr.setMessage("账户名或密码错误");
         }else{
+            dggObject.put("isAd",byname.get("isAd"));
+            List router = dggService.findRouter(dggObject);
             boolean matches = bp.matches(dggObject.getString("password"), (String) byname.get("password"));
             if(matches){
 //            登录成功
@@ -184,7 +192,28 @@ public class DggController extends BaseController{
     public JsonResult getSet(@RequestParam String formdata){
         JSONObject dggObject = JSONObject.parseObject(formdata);
         Map set = dggService.getSet(dggObject);
-        System.err.println(set);
+        List allde = dggService.findAllde(dggObject);
+
+        if(allFirstDepart.isEmpty()){
+            allFirstDepart.clear();
+            getChildNodes(0, allde);
+        }
+        if((int)dggObject.get("isAd") == 1){
+            dggObject.remove("isAd");
+            List depart = new LinkedList();
+            depart.add(dggObject);
+            set.put("firstDepart",depart);
+        }else if((int)dggObject.get("isAd") == 2){
+            set.put("firstDepart",allFirstDepart);
+
+        }
+
+        Map task = new HashMap();
+        task.put("startSerTask", ServeScheduleTask.startSerTask);
+        task.put("startTask", SaticScheduleTask.startTask);
+        task.put("downLordUrl", SaticScheduleTask.downLordUrl);
+
+        set.put("task",task);
 
         JsonResult jr = new JsonResult();
 
@@ -193,6 +222,99 @@ public class DggController extends BaseController{
         jr.setData(set);
         return jr;
     }
+
+    /**
+     * 设置成员信息
+     */
+    @PostMapping("setUser")
+    @ResponseBody
+    public JsonResult setUser(@RequestBody String formdata) {
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+        JSONObject form = JSONObject.parseObject(dggObject.getString("formdata"));
+
+        if(form.get("password") != null){
+            String password = bp.encode(form.getString("password").trim());
+            form.put("password",password);
+        }
+        if(form.get("id") != null){
+            dggService.setUser(form);
+        }else {
+            dggService.regUser(form);
+        }
+
+
+        JsonResult jr = new JsonResult();
+        jr.setState(SUCCESS);
+        jr.setMessage("用户信息修改成功！");
+        return jr;
+    }
+
+    /**
+     * 设置成员信息
+     */
+    @PostMapping("delUser")
+    @ResponseBody
+    public JsonResult delUser(@RequestBody String formdata) {
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+        JSONObject form = JSONObject.parseObject(dggObject.getString("formdata"));
+        dggService.delUser(form);
+
+        JsonResult jr = new JsonResult();
+        jr.setState(SUCCESS);
+        jr.setMessage("删除成功！");
+        return jr;
+    }
+
+
+    /**
+     * 设置成员信息
+     */
+    @PostMapping("setMoney")
+    @ResponseBody
+    public JsonResult setMoney(@RequestBody String formdata) {
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+        JSONObject form = JSONObject.parseObject(dggObject.getString("formdata"));
+        Set<Map.Entry<String, Object>> entrySet
+                = form.entrySet();
+        List param = new LinkedList();
+        for(Map.Entry<String,Object> e:entrySet) {
+            Map temp = new HashMap();
+            String key = e.getKey();
+            Object value = e.getValue();
+            temp.put("pname",key);
+            temp.put("costFix",Float.parseFloat(value.toString()));
+            temp.put("isCost",1);
+            param.add(temp);
+        }
+
+        dggService.setMoney(param);
+        JsonResult jr = new JsonResult();
+        jr.setState(SUCCESS);
+        jr.setMessage("设置成功！");
+        return jr;
+    }
+
+    /**
+     * 设置成员信息
+     */
+    @PostMapping("setTask")
+    @ResponseBody
+    public JsonResult setTask(@RequestBody String formdata) {
+        JSONObject dggObject = JSONObject.parseObject(formdata);
+        JSONObject form = JSONObject.parseObject(dggObject.getString("formdata"));
+
+
+        SaticScheduleTask.downLordUrl = form.getString("downLordUrl");
+        ServeScheduleTask.downLordUrl = form.getString("downLordUrl");
+
+        SaticScheduleTask.startTask = form.getIntValue("startTask");
+        ServeScheduleTask.startSerTask = form.getIntValue("startSerTask");
+        JsonResult jr = new JsonResult();
+        jr.setState(SUCCESS);
+        jr.setMessage("设置成功！");
+        return jr;
+    }
+
 
     /**
      * 递归处理   数据库树结构数据->树形json

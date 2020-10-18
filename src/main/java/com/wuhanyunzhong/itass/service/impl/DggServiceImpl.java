@@ -440,8 +440,8 @@ public class DggServiceImpl implements DggService {
         List zhuanbiV3Data = new LinkedList();
         List zhuanbiV4Data = new LinkedList();
         List<Map> dayCompareJtlv = dggMapper.findWeekCompareJtlv(dggObject);
-        List<Map> dayCompareInfo = dggMapper.findWeekCompareInfo(dggObject);
 
+        List<Map> dayCompareInfo = dggMapper.findWeekCompareInfo(dggObject);
 //        合计信息
         for (Map map : dayCompareJtlv) {
 //            分析第一个图的合计信息
@@ -665,6 +665,46 @@ public class DggServiceImpl implements DggService {
         return getSet;
     }
 
+    @Override
+    public int setUser(JSONObject dggObject) {
+        Integer integer = dggMapper.setUser(dggObject);
+        if(integer != 1){
+            throw new DggException("修改失败，请重新尝试");
+        }
+        return integer;
+
+    }
+
+    @Override
+    public int regUser(JSONObject dggObject) {
+        Integer integer = dggMapper.regUser(dggObject);
+        if(integer != 1){
+            throw new DggException("修改失败，请重新尝试");
+        }
+        return integer;
+    }
+
+    @Override
+    public int delUser(JSONObject dggObject) {
+        Integer integer = dggMapper.delUser(dggObject);
+        if(integer != 1){
+            throw new DggException("删除失败，请重新尝试");
+        }
+        return integer;
+    }
+
+    @Override
+    public int setMoney(List dggObject) {
+        Integer integer = dggMapper.setMoney(dggObject);
+
+
+        if(integer < 1){
+            throw new DggException("修改失败，请重新尝试");
+        }
+        return integer;
+    }
+
+
     //    小图分析方法
     //    @Cacheable(value = "miniData",key = "#dggObject.getString('pname')+'-' +#dggObject.getString('h')")
     public Map anMinView(Map peakAndAmountData, List<Map> viewData, Map costData, Map avgData) {
@@ -805,6 +845,7 @@ public class DggServiceImpl implements DggService {
             v4.add(thTime);
 
         }
+
         costData.put("costAmount", costAmount);
 
         Map otherDate = new HashMap();

@@ -32,29 +32,26 @@ public class SaticScheduleTask {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    public static String downLordUrl = "58054";
+    public static String downLordUrl = "85144";
+    public static int startTask = 1;
     public static List<DepartDate> firstData;
     public static List<JtlDate> jtlDates;
     public static int isHourAddFirst = 1;
 
     //3.添加定时任务
-    @Scheduled(cron = "0 0/10 9,10,11,12,14,15,16,17,18,20,23 * * ?")
+    @Scheduled(cron = "0 0/1 9,10,11,12,14,15,16,17,18,20,23 * * ?")
     private void configureTasks() {
+        if(startTask < 1){
+            return;
+        }
+
         Calendar calendar = Calendar.getInstance();
 
         //获取年
         int year = calendar.get(Calendar.YEAR);
         //获取月 月从0开始，0表示1月，1表示2月
         int month = calendar.get(Calendar.MONTH)+1;
-        /*
-         * 获取日
-         * 与"天"相关的时间分量:
-         * DAY_OF_MONTH:月中的天
-         * DAY_OF_WEEK:周中的天
-         * DAY_OF_YEAR:年中的天
-         *
-         * DATE:月中的天。与DAY_OF_MONTH一致
-         */
+
         int day = calendar.get(Calendar.DATE);
 
         int h = calendar.get(Calendar.HOUR_OF_DAY);
@@ -78,8 +75,7 @@ public class SaticScheduleTask {
 
            }
         }
-        System.err.println(h);
-        System.err.println(isHourAddFirst);
+
         if(null == firstData){
             String filePath = "src/main/webapp/temporary/depart.xlsx";
             EasyExcel.read(filePath, DepartDate.class, new DemoDataListener()).sheet().headRowNumber(0).doRead();

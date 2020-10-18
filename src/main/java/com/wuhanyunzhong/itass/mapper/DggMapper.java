@@ -49,4 +49,9 @@ public interface DggMapper {
 //设置页的相关方法
     List userByPid(JSONObject regObject);
     List departByPid(JSONObject regObject);
+
+    Integer setUser(JSONObject dggObject);
+    Integer regUser(JSONObject dggObject);
+    Integer delUser(JSONObject dggObject);
+    Integer setMoney(List dggObject);
 }
